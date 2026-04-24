@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { client } from '../client.config.js'
+const primary = client.primaryColor || '#2d5a3d'
+---
+
+<Layout title="Service Areas" description={`${client.name} serves ${client.serviceArea?.join(', ')}.`}>
+
+  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
+    <div style="max-width:1200px;margin:0 auto">
+      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Areas We Serve</h1>
+      <p style="color:#6b7280;font-size:1.05rem">Professional {client.industry} services throughout the region.</p>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:3rem">
+        {client.serviceArea?.map((area: string) => (
+          <div style="padding:1.25rem;border-radius:12px;border:1px solid #e5e7eb;text-align:center">
+            <div style={`width:32px;height:32px;border-radius:50%;background:${primary}22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center`}>
+              <svg width="16" height="16" fill={primary} viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+            </div>
+            <p style="font-weight:600;font-size:0.9rem">{area}</p>
+          </div>
+        ))}
+      </div>
+      <div style="padding:2.5rem;background:#f9fafb;border-radius:16px;text-align:center">
+        <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:0.75rem">Don't See Your City?</h2>
+        <p style="color:#6b7280;margin-bottom:1.5rem">We may still be able to help. Contact us to check availability.</p>
+        <a href="/contact" style={`background:${primary};color:#fff;padding:0.75rem 2rem;border-radius:10px;font-weight:600`}>Check Availability</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

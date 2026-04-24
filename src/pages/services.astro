@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { client } from '../client.config.js'
+
+let services = []
+try {
+  const res = await fetch(`${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=50`)
+  services = (await res.json()).docs || []
+} catch {}
+
+const displayServices = services.length
+  ? services
+  : client.services.map((s: string) => ({ title: s, description: `Expert ${s.toLowerCase()} services by licensed professionals in ${client.city}, ${client.state}.` }))
+
+const primary = client.primaryColor || '#2d5a3d'
+---
+
+<Layout title="Services" description={`Professional ${client.industry} services in ${client.city}, ${client.state}.`}>
+
+  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
+    <div style="max-width:1200px;margin:0 auto">
+      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Our Services</h1>
+      <p style="color:#6b7280;max-width:600px;margin:0 auto;font-size:1.05rem">
+        Professional {client.industry} services for homeowners and businesses in {client.city} and surrounding areas.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem">
+        {displayServices.map((service: any) => (
+          <div style="display:flex;gap:1.25rem;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb">
+            <div style={`flex-shrink:0;width:48px;height:48px;border-radius:12px;background:${primary}22;display:flex;align-items:center;justify-content:center`}>
+              <svg width="24" height="24" fill="none" stroke={primary} viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:0.4rem">{service.title}</h2>
+              <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">{service.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
+    <div style="max-width:700px;margin:0 auto">
+      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Need a Service Not Listed?</h2>
+      <p style="opacity:0.9;margin-bottom:1.5rem">Contact us — we handle most {client.industry} needs.</p>
+      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Contact Us</a>
+    </div>
+  </section>
+
+</Layout>

@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { client } from '../client.config.js'
+const primary = client.primaryColor || '#2d5a3d'
+---
+
+<Layout title="About Us" description={`Learn about ${client.name} — trusted ${client.industry} professionals in ${client.city}, ${client.state}.`}>
+
+  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
+    <div style="max-width:1200px;margin:0 auto">
+      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">About {client.name}</h1>
+      <p style="color:#6b7280;max-width:600px;margin:0 auto;font-size:1.05rem">
+        Trusted {client.industry} professionals proudly serving {client.city} and surrounding communities.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:3rem;align-items:center">
+      <div>
+        <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1.5rem">Who We Are</h2>
+        <p style="color:#4b5563;line-height:1.8;margin-bottom:1rem">
+          {client.name} is a locally owned and operated {client.industry} company serving {client.city}, {client.state} and the surrounding areas. We take pride in delivering high-quality work at fair prices.
+        </p>
+        <p style="color:#4b5563;line-height:1.8;margin-bottom:1rem">
+          Our team of licensed professionals brings years of hands-on experience to every project. Whether it's a small repair or a large installation, we treat every job with the same care and professionalism.
+        </p>
+        <p style="color:#4b5563;line-height:1.8;margin-bottom:2rem">
+          We are fully licensed and insured, giving our customers peace of mind on every job.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="/contact" style={`background:${primary};color:#fff;padding:0.75rem 1.75rem;border-radius:10px;font-weight:600`}>Get Free Quote</a>
+          <a href={`tel:${client.phone}`} style={`border:2px solid ${primary};color:${primary};padding:0.75rem 1.75rem;border-radius:10px;font-weight:600`}>Call Us</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        {[
+          { number: '500+', label: 'Projects Completed' },
+          { number: '10+', label: 'Years Experience' },
+          { number: '100%', label: 'Licensed & Insured' },
+          { number: '5★', label: 'Average Rating' },
+        ].map(stat => (
+          <div style="padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;text-align:center">
+            <div style={`font-size:2rem;font-weight:800;color:${primary};margin-bottom:0.35rem`}>{stat.number}</div>
+            <div style="font-size:0.875rem;color:#6b7280">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem;background:#f9fafb">
+    <div style="max-width:1200px;margin:0 auto">
+      <h2 style="font-size:1.75rem;font-weight:700;text-align:center;margin-bottom:2.5rem">Our Values</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+        {[
+          { icon: '🤝', title: 'Integrity', desc: 'We do what we say. Honest pricing, no surprises.' },
+          { icon: '⭐', title: 'Quality', desc: 'We use quality materials and stand behind our work.' },
+          { icon: '🏠', title: 'Community', desc: `${client.city} is our home. We care about our neighbors.` },
+        ].map(v => (
+          <div style="text-align:center;padding:2rem 1.5rem;background:#fff;border-radius:12px;border:1px solid #e5e7eb">
+            <div style="font-size:2.5rem;margin-bottom:0.75rem">{v.icon}</div>
+            <h3 style="font-weight:700;margin-bottom:0.5rem">{v.title}</h3>
+            <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
+    <div style="max-width:700px;margin:0 auto">
+      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Ready to Work Together?</h2>
+      <p style="opacity:0.9;margin-bottom:1.5rem">Contact us today for your free estimate.</p>
+      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Get Free Quote</a>
+    </div>
+  </section>
+
+</Layout>

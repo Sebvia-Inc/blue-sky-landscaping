@@ -1,0 +1,131 @@
+---
+import '../styles/global.css'
+import { client } from '../client.config.js'
+const { title, description } = Astro.props
+const fullTitle = `${title} | ${client.name}`
+const metaDesc = description || client.tagline
+const currentPath = Astro.url.pathname
+const primary = client.primaryColor || '#2d5a3d'
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={metaDesc} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style set:html={`
+    :root {
+      --primary: ${primary};
+      --primary-light: ${primary}22;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; color: #111; background: #fff; }
+    a { text-decoration: none; }
+    img { max-width: 100%; height: auto; }
+    .nav-link { color: #4b5563; font-weight: 500; font-size: 0.9rem; transition: color 0.15s; }
+    .nav-link:hover, .nav-link.active { color: ${primary}; }
+    .btn-primary { background: ${primary}; color: #fff; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; display: inline-block; border: none; cursor: pointer; }
+    .btn-outline { border: 2px solid ${primary}; color: ${primary}; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; display: inline-block; background: transparent; cursor: pointer; }
+    .btn-outline:hover { background: ${primary}; color: #fff; }
+    .section { padding: 4rem 1.5rem; }
+    .section-light { padding: 4rem 1.5rem; background: ${primary}22; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+    .section-subtitle { color: #6b7280; max-width: 600px; margin: 0 auto 2.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .badge { background: ${primary}22; color: ${primary}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; display: inline-block; }
+    .text-center { text-align: center; }
+    .text-primary { color: ${primary}; }
+    .bg-primary { background: ${primary}; color: #fff; }
+    .hero { padding: 5rem 1.5rem; background: linear-gradient(135deg, ${primary}15 0%, #fff 70%); }
+    @media (max-width: 768px) {
+      .section, .section-light, .hero { padding: 2.5rem 1rem; }
+      .section-title { font-size: 1.5rem; }
+      .desktop-only { display: none !important; }
+    }
+    @media (min-width: 769px) {
+      .mobile-only { display: none !important; }
+      #mobile-nav { display: none !important; }
+    }
+  `}></style>
+</head>
+<body style="min-height:100vh; display:flex; flex-direction:column">
+
+  <header style="position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 1.5rem">
+      <a href="/" style={`color:${primary};font-weight:800;font-size:1.15rem`}>{client.name}</a>
+      <nav class="desktop-only" style="display:flex;gap:1.75rem;align-items:center">
+        <a href="/" class={`nav-link${currentPath==='/'?' active':''}`}>Home</a>
+        <a href="/services" class={`nav-link${currentPath==='/services'?' active':''}`}>Services</a>
+        <a href="/about" class={`nav-link${currentPath==='/about'?' active':''}`}>About</a>
+        <a href="/gallery" class={`nav-link${currentPath==='/gallery'?' active':''}`}>Gallery</a>
+        <a href="/testimonials" class={`nav-link${currentPath==='/testimonials'?' active':''}`}>Reviews</a>
+        <a href="/blog" class={`nav-link${currentPath==='/blog'?' active':''}`}>Blog</a>
+        <a href="/contact" class={`nav-link${currentPath==='/contact'?' active':''}`}>Contact</a>
+        <a href="/contact" class="btn-primary">Get Free Quote</a>
+      </nav>
+      <button id="menu-btn" class="mobile-only" style="background:none;border:none;cursor:pointer;padding:0.5rem">
+        <svg width="24" height="24" fill="none" stroke="#374151" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-nav" style="display:none;flex-direction:column;padding:1rem 1.5rem;gap:0.5rem;border-top:1px solid #f3f4f6">
+      <a href="/" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Home</a>
+      <a href="/services" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Services</a>
+      <a href="/about" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">About</a>
+      <a href="/gallery" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Gallery</a>
+      <a href="/testimonials" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Reviews</a>
+      <a href="/blog" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Blog</a>
+      <a href="/contact" style="padding:0.5rem 0;color:#374151;font-weight:500;border-bottom:1px solid #f9fafb">Contact</a>
+      <a href="/contact" class="btn-primary" style="margin-top:0.5rem;text-align:center">Get Free Quote</a>
+    </div>
+  </header>
+
+  <main style="flex:1"><slot /></main>
+
+  <footer style="background:#111827;color:#d1d5db;margin-top:4rem">
+    <div class="container" style="padding:3rem 1.5rem">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;margin-bottom:2rem">
+        <div>
+          <h3 style="color:#fff;font-weight:700;margin-bottom:0.75rem">{client.name}</h3>
+          <p style="font-size:0.875rem;color:#9ca3af;margin-bottom:0.5rem">{client.tagline}</p>
+          {client.address && <p style="font-size:0.875rem">{client.address}, {client.city}, {client.state}</p>}
+        </div>
+        <div>
+          <h4 style="color:#fff;font-weight:600;margin-bottom:0.75rem">Services</h4>
+          {client.services.slice(0,5).map((s:string) => (
+            <a href="/services" style="display:block;color:#9ca3af;font-size:0.875rem;margin-bottom:0.35rem">{s}</a>
+          ))}
+        </div>
+        <div>
+          <h4 style="color:#fff;font-weight:600;margin-bottom:0.75rem">Contact</h4>
+          {client.phone && <a href={`tel:${client.phone}`} style="display:block;color:#9ca3af;font-size:0.875rem;margin-bottom:0.35rem">{client.phone}</a>}
+          {client.email && <a href={`mailto:${client.email}`} style="display:block;color:#9ca3af;font-size:0.875rem;margin-bottom:0.75rem">{client.email}</a>}
+          <a href="/contact" class="btn-primary" style="font-size:0.875rem">Get Free Quote</a>
+        </div>
+        <div>
+          <h4 style="color:#fff;font-weight:600;margin-bottom:0.75rem">Service Areas</h4>
+          {client.serviceArea?.slice(0,5).map((a:string) => (
+            <p style="color:#9ca3af;font-size:0.875rem;margin-bottom:0.25rem">{a}</p>
+          ))}
+        </div>
+      </div>
+      <div style="border-top:1px solid #1f2937;padding-top:1.5rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;font-size:0.75rem;color:#6b7280">
+        <p>© {new Date().getFullYear()} {client.name}. All rights reserved.</p>
+        <p>Licensed & Insured | {client.city}, {client.state}</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('menu-btn')?.addEventListener('click', () => {
+      const nav = document.getElementById('mobile-nav');
+      if (nav) nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    });
+  </script>
+</body>
+</html>

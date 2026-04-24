@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { client } from '../../client.config.js'
+
+let posts = []
+try {
+  const res = await fetch(`${client.cmsUrl}/api/blog?where[tenant.slug][equals]=${client.tenantSlug}&limit=20&sort=-createdAt`)
+  posts = (await res.json()).docs || []
+} catch {}
+
+const primary = client.primaryColor || '#2d5a3d'
+---
+
+<Layout title="Blog" description={`Tips and news from ${client.name}.`}>
+
+  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
+    <div style="max-width:1200px;margin:0 auto">
+      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Blog & Tips</h1>
+      <p style="color:#6b7280;font-size:1.05rem">Expert advice and news from {client.name}.</p>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      {posts.length > 0 ? (
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem">
+          {posts.map((post: any) => (
+            <a href={`/blog/${post.slug}`} style="display:block;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;text-decoration:none;color:#111">
+              {post.image?.url && (
+                <div style="aspect-ratio:16/9;overflow:hidden;background:#f3f4f6">
+                  <img src={post.image.url} alt={post.title} style="width:100%;height:100%;object-fit:cover" />
+                </div>
+              )}
+              <div style="padding:1.25rem">
+                <p style="font-size:0.8rem;color:#9ca3af;margin-bottom:0.5rem">
+                  {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}
+                </p>
+                <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;line-height:1.4">{post.title}</h2>
+                {post.excerpt && <p style="color:#6b7280;font-size:0.875rem;line-height:1.5">{post.excerpt}</p>}
+                <p style={`color:${primary};font-size:0.875rem;font-weight:600;margin-top:0.75rem`}>Read more →</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div style="text-align:center;padding:4rem;color:#6b7280">
+          <div style="font-size:4rem;margin-bottom:1rem">📝</div>
+          <p style="font-size:1.1rem;font-weight:500;margin-bottom:0.5rem">Blog posts coming soon!</p>
+          <p style="font-size:0.875rem">Check back for tips and updates from our team.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+</Layout>

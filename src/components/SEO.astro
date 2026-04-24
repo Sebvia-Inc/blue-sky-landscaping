@@ -1,0 +1,36 @@
+// src/components/SEO.astro
+import { client } from '../client.config.js'
+
+const { title, description, type = 'website', image } = Astro.props
+
+const fullTitle = `${title} | ${client.name} - ${client.city}, ${client.state}`
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: client.name,
+  telephone: client.phone,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: client.address,
+    addressLocality: client.city,
+    addressRegion: client.state,
+    postalCode: client.zip,
+  },
+  areaServed: client.serviceArea.map(city => ({
+    '@type': 'City', name: city
+  }))
+}
+---
+<title>{fullTitle}</title>
+<meta name='description' content={description} />
+<meta name='robots' content='index, follow' />
+<link rel='canonical' href={Astro.url} />
+<meta property='og:title' content={fullTitle} />
+<meta property='og:description' content={description} />
+<meta property='og:type' content={type} />
+<meta property='og:image' content={image || '/og-default.jpg'} />
+<script type='application/ld+json' set:html={JSON.stringify(localBusinessSchema)} />
+{client.googleAnalyticsId && (
+  <script async src={`https://www.googletagmanager.com/gtag/js?id=${client.googleAnalyticsId}`} />
+)}

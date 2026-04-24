@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { client } from '../client.config.js'
+
+let gallery = []
+try {
+  const res = await fetch(`${client.cmsUrl}/api/gallery?where[tenant.slug][equals]=${client.tenantSlug}&limit=20`)
+  gallery = (await res.json()).docs || []
+} catch {}
+
+const primary = client.primaryColor || '#2d5a3d'
+---
+
+<Layout title="Gallery" description={`View our work — ${client.name} project gallery.`}>
+
+  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
+    <div style="max-width:1200px;margin:0 auto">
+      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Our Work</h1>
+      <p style="color:#6b7280;font-size:1.05rem">Browse photos from our recent projects.</p>
+    </div>
+  </section>
+
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      {gallery.length > 0 ? (
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem">
+          {gallery.map((item: any) => (
+            <div style="border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+              {item.image?.url && <img src={item.image.url} alt={item.title || 'Project'} style="width:100%;aspect-ratio:4/3;object-fit:cover" />}
+              {item.title && <div style="padding:0.75rem 1rem;font-weight:500;font-size:0.9rem">{item.title}</div>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style="text-align:center;padding:4rem;color:#6b7280">
+          <div style="font-size:4rem;margin-bottom:1rem">📸</div>
+          <p style="font-size:1.1rem;font-weight:500;margin-bottom:0.5rem">Photos coming soon!</p>
+          <p style="font-size:0.875rem">Check back for project photos from our team.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
+    <div style="max-width:700px;margin:0 auto">
+      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Like What You See?</h2>
+      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Get Free Quote</a>
+    </div>
+  </section>
+
+</Layout>
