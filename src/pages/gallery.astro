@@ -2,50 +2,344 @@
 import Layout from '../layouts/Layout.astro'
 import { client } from '../client.config.js'
 
-let gallery = []
+let cmsGallery = []
 try {
   const res = await fetch(`${client.cmsUrl}/api/gallery?where[tenant.slug][equals]=${client.tenantSlug}&limit=20`)
-  gallery = (await res.json()).docs || []
+  cmsGallery = (await res.json()).docs || []
 } catch {}
 
-const primary = client.primaryColor || '#2d5a3d'
+const localGallery = [
+  { image: '/images/projects/patio.png', title: 'Modern Entertainment Patio', category: 'Residential' },
+  { image: '/images/projects/garden.png', title: 'Classic English Garden', category: 'Garden Design' },
+  { image: '/images/projects/pool.png', title: 'Tropical Oasis Pool', category: 'Luxury' },
+  { image: '/images/projects/lighting.png', title: 'Estate Night Lighting', category: 'Lighting' },
+  { image: '/images/projects/zen.png', title: 'Minimalist Zen Retreat', category: 'Architecture' },
+  { image: '/images/projects/masonry.png', title: 'Custom Stone Masonry', category: 'Hardscape' },
+];
+
+const displayGallery = cmsGallery.length > 0 ? cmsGallery : localGallery;
+
+const primary = (client.primaryColor || '#b45309').trim();
 ---
 
-<Layout title="Gallery" description={`View our work — ${client.name} project gallery.`}>
+<Layout title="Gallery" description={`Explore our portfolio of premium landscaping projects in ${client.city}. From modern patios to lush gardens, see how we transform outdoor spaces.`}>
 
-  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Our Work</h1>
-      <p style="color:#6b7280;font-size:1.05rem">Browse photos from our recent projects.</p>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="hero-bg">
+      <img src="/images/gallery-hero.png" alt="Our Landscaping Portfolio" />
+      <div class="overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Our Masterpieces</h1>
+        <p class="hero-subtitle">Visualizing the intersection of art and nature in {client.city}.</p>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Gallery</span>
+        </nav>
+      </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto">
-      {gallery.length > 0 ? (
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem">
-          {gallery.map((item: any) => (
-            <div style="border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
-              {item.image?.url && <img src={item.image.url} alt={item.title || 'Project'} style="width:100%;aspect-ratio:4/3;object-fit:cover" />}
-              {item.title && <div style="padding:0.75rem 1rem;font-weight:500;font-size:0.9rem">{item.title}</div>}
+  <!-- Gallery Section -->
+  <section class="gallery-section">
+    <div class="container">
+      <div class="section-intro">
+        <span class="sub-title">Portfolio</span>
+        <h2>Explore Our Recent Work</h2>
+        <p>Every project is a unique collaboration between our team and the natural landscape.</p>
+      </div>
+
+      <div class="gallery-grid">
+        {displayGallery.map((item: any, index: number) => (
+          <div class={`gallery-item ${index % 5 === 0 ? 'large' : ''}`}>
+            <div class="image-wrapper">
+              <img src={item.image?.url || item.image} alt={item.title} loading="lazy" />
+              <div class="item-overlay">
+                <div class="overlay-content">
+                  <span class="category">{item.category || 'Landscape'}</span>
+                  <h3>{item.title}</h3>
+                  <div class="view-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                    </svg>
+                    View Project
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div style="text-align:center;padding:4rem;color:#6b7280">
-          <div style="font-size:4rem;margin-bottom:1rem">📸</div>
-          <p style="font-size:1.1rem;font-weight:500;margin-bottom:0.5rem">Photos coming soon!</p>
-          <p style="font-size:0.875rem">Check back for project photos from our team.</p>
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
-    <div style="max-width:700px;margin:0 auto">
-      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Like What You See?</h2>
-      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Get Free Quote</a>
+  <!-- CTA Section -->
+  <section class="gallery-cta">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-text">
+          <h2>Ready to start your own transformation?</h2>
+          <p>Schedule a free consultation and let's discuss your vision.</p>
+        </div>
+        <div class="cta-action">
+          <a href="/contact" class="btn-primary">Get Your Free Estimate</a>
+        </div>
+      </div>
     </div>
   </section>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .sub-title {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    /* Hero Section */
+    .page-hero {
+      height: 450px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .breadcrumb a { color: #fff; text-decoration: none; transition: 0.3s; }
+    .breadcrumb a:hover { color: var(--primary); }
+    .breadcrumb .current { font-weight: 700; color: var(--primary); }
+
+    /* Gallery Grid */
+    .gallery-section {
+      padding: 8rem 0;
+      background: #f8f1ec;
+    }
+
+    .section-intro {
+      text-align: center;
+      margin-bottom: 5rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-intro h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-intro p {
+      color: #666;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-auto-rows: 400px;
+      gap: 2rem;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 30px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .gallery-item.large {
+      grid-column: span 2;
+    }
+
+    .image-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .item-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 3rem;
+      opacity: 0;
+      transition: 0.4s;
+    }
+
+    .overlay-content {
+      transform: translateY(20px);
+      transition: 0.4s 0.1s;
+    }
+
+    .category {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    .overlay-content h3 {
+      color: #fff;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .view-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.75rem 0;
+      border-bottom: 2px solid var(--primary);
+      transition: 0.3s;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .gallery-item:hover .item-overlay {
+      opacity: 1;
+    }
+
+    .gallery-item:hover .overlay-content {
+      transform: translateY(0);
+    }
+
+    /* CTA Section */
+    .gallery-cta {
+      padding-bottom: 8rem;
+      background: #f8f1ec;
+    }
+
+    .cta-inner {
+      background: #111;
+      padding: 5rem;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    .cta-text h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .cta-text p {
+      opacity: 0.7;
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(180, 83, 9, 0.3);
+    }
+
+    @media (max-width: 992px) {
+      .gallery-item.large {
+        grid-column: span 1;
+      }
+      .cta-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 3rem;
+        padding: 4rem 2rem;
+      }
+      .cta-text h2 { font-size: 2rem; }
+      .gallery-grid {
+        grid-auto-rows: 350px;
+      }
+    }
+  </style>
 
 </Layout>

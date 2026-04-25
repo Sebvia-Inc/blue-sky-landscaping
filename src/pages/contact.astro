@@ -1,118 +1,678 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import { client } from '../client.config.js'
-const primary = client.primaryColor || '#2d5a3d'
+import Layout from "../layouts/Layout.astro";
+import { client } from "../client.config.js";
+
+const primary = (client.primaryColor || "#b45309").trim();
 ---
 
-<Layout title="Contact Us" description={`Contact ${client.name} for a free estimate. Serving ${client.city}, ${client.state}.`}>
-
-  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Contact Us</h1>
-      <p style="color:#6b7280;font-size:1.05rem">Get your free estimate today. We respond within 24 hours.</p>
+<Layout
+  title="Contact Us"
+  description={`Contact ${client.name} for a free estimate. Serving ${client.city}, ${client.state}.`}
+>
+  <!-- Contact Hero -->
+  <section class="contact-hero">
+    <div class="hero-bg">
+      <img src="/images/service-hero.png" alt="Landscaping Contact" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Contact Us</h1>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">/</span>
+          <span>Contact</span>
+        </nav>
+      </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:3rem">
-
-      <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.05)">
-        <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:1.5rem">Get a Free Quote</h2>
-        <form id="contact-form" style="display:flex;flex-direction:column;gap:1rem">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-            <div>
-              <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">First Name *</label>
-              <input type="text" name="firstName" required style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;box-sizing:border-box" />
-            </div>
-            <div>
-              <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Last Name *</label>
-              <input type="text" name="lastName" required style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;box-sizing:border-box" />
-            </div>
+  <!-- Quick Info Row -->
+  <section class="quick-info-section">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="icon-box">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 111.314 0z"
+              ></path><path d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path></svg
+            >
           </div>
-          <div>
-            <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Phone *</label>
-            <input type="tel" name="phone" required style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;box-sizing:border-box" />
-          </div>
-          <div>
-            <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Email</label>
-            <input type="email" name="email" style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;box-sizing:border-box" />
-          </div>
-          <div>
-            <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Service Needed *</label>
-            <select name="service" required style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff;box-sizing:border-box">
-              <option value="">Select a service...</option>
-              {client.services.map((s: string) => <option value={s}>{s}</option>)}
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label style="display:block;font-size:0.8rem;font-weight:600;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Message</label>
-            <textarea name="message" rows="4" placeholder="Describe your project..." style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;resize:vertical;box-sizing:border-box"></textarea>
-          </div>
-          <button type="submit" style={`background:${primary};color:#fff;padding:0.9rem;border-radius:10px;font-size:1rem;font-weight:700;border:none;cursor:pointer`}>
-            Send Message
-          </button>
-        </form>
-        <div id="form-success" style="display:none;margin-top:1rem;padding:1rem;background:#dcfce7;border-radius:8px;color:#166534;font-weight:500;text-align:center">
-          ✓ Thank you! We'll be in touch within 24 hours.
+          <h3>Our Location</h3>
+          <p>{client.address}<br />{client.city}, {client.state}</p>
         </div>
-      </div>
 
-      <div style="display:flex;flex-direction:column;gap:1.25rem">
-        <h2 style="font-size:1.5rem;font-weight:700">Get in Touch</h2>
-        {client.phone && (
-          <a href={`tel:${client.phone}`} style="display:flex;align-items:center;gap:1rem;padding:1.25rem;border-radius:12px;border:1px solid #e5e7eb;text-decoration:none;color:#111">
-            <div style={`width:48px;height:48px;border-radius:12px;background:${primary}22;display:flex;align-items:center;justify-content:center;flex-shrink:0`}>
-              <svg width="22" height="22" fill="none" stroke={primary} viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-            </div>
-            <div>
-              <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.2rem">Phone</p>
-              <p style="font-weight:600">{client.phone}</p>
-            </div>
-          </a>
-        )}
-        {client.email && (
-          <a href={`mailto:${client.email}`} style="display:flex;align-items:center;gap:1rem;padding:1.25rem;border-radius:12px;border:1px solid #e5e7eb;text-decoration:none;color:#111">
-            <div style={`width:48px;height:48px;border-radius:12px;background:${primary}22;display:flex;align-items:center;justify-content:center;flex-shrink:0`}>
-              <svg width="22" height="22" fill="none" stroke={primary} viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-            <div>
-              <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.2rem">Email</p>
-              <p style="font-weight:600">{client.email}</p>
-            </div>
-          </a>
-        )}
-        {client.address && (
-          <div style="display:flex;align-items:center;gap:1rem;padding:1.25rem;border-radius:12px;border:1px solid #e5e7eb">
-            <div style={`width:48px;height:48px;border-radius:12px;background:${primary}22;display:flex;align-items:center;justify-content:center;flex-shrink:0`}>
-              <svg width="22" height="22" fill="none" stroke={primary} viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </div>
-            <div>
-              <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.2rem">Address</p>
-              <p style="font-weight:600">{client.address}, {client.city}, {client.state}</p>
-            </div>
+        <div class="info-card">
+          <div class="icon-box">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+              ></path></svg
+            >
           </div>
-        )}
-        <div style={`padding:1.5rem;border-radius:12px;background:${primary}12`}>
-          <h3 style="font-weight:700;margin-bottom:0.75rem">Service Areas</h3>
-          <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
-            {client.serviceArea?.map((area: string) => (
-              <span style={`background:#fff;color:${primary};padding:0.3rem 0.75rem;border-radius:20px;font-size:0.8rem;font-weight:500`}>{area}</span>
-            ))}
+          <h3>Phone Number</h3>
+          <p><a href={`tel:${client.phone}`}>{client.phone}</a></p>
+        </div>
+
+        <div class="info-card">
+          <div class="icon-box">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><circle cx="12" cy="12" r="10"></circle><polyline
+                points="12 6 12 12 16 14"></polyline></svg
+            >
           </div>
+          <h3>Working Hours</h3>
+          <p>Mon - Sat: 8:00am - 6:00pm<br />Sunday: Closed</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Contact Form Section -->
+  <section class="main-contact-section">
+    <div class="container">
+      <div class="contact-layout">
+        <!-- Left Column: Info -->
+        <div class="contact-info-col">
+          <span class="sub-label">GET IN TOUCH</span>
+          <h2>Ready to Transform Your Outdoor Space?</h2>
+          <p>
+            Whether you're looking for a complete garden redesign or regular
+            maintenance, our expert team is here to help. Reach out today for a
+            free, no-obligation estimate.
+          </p>
+
+          <div class="contact-details-list">
+            <div class="detail-item">
+              <div class="detail-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><path
+                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  ></path><polyline points="22,6 12,13 2,6"></polyline></svg
+                >
+              </div>
+              <div class="detail-text">
+                <strong>Email Us</strong>
+                <span>{client.email}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><path
+                    d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+                  ></path></svg
+                >
+              </div>
+              <div class="detail-text">
+                <strong>Our Chat</strong>
+                <span>Available 24/7 via WhatsApp</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="social-circles">
+            <a href="#" class="social-circle"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                ><path
+                  d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
+                ></path></svg
+              ></a
+            >
+            <a href="#" class="social-circle"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                ><path
+                  d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"
+                ></path></svg
+              ></a
+            >
+            <a href="#" class="social-circle"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                ><path
+                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                ></path><rect x="2" y="9" width="4" height="12"></rect><circle
+                  cx="4"
+                  cy="4"
+                  r="2"></circle></svg
+              ></a
+            >
+          </div>
+        </div>
+
+        <!-- Right Column: Form -->
+        <div class="contact-form-col">
+          <div class="luxe-form-wrapper">
+            <form id="contact-form" class="luxe-form">
+              <div class="form-grid">
+                <div class="form-item">
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name *"
+                    required
+                  />
+                </div>
+                <div class="form-item">
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name *"
+                    required
+                  />
+                </div>
+                <div class="form-item">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address *"
+                    required
+                  />
+                </div>
+                <div class="form-item">
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Phone Number *"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-item">
+                <select name="service" required>
+                  <option value="">Select Service Needed *</option>
+                  {
+                    client.services.map((s: string) => (
+                      <option value={s}>{s}</option>
+                    ))
+                  }
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <textarea
+                  name="message"
+                  placeholder="Describe your project here..."
+                  rows="5"></textarea>
+              </div>
+              <button type="submit" class="luxe-submit-btn">Send Message</button
+              >
+            </form>
+            <div id="form-success" class="success-message">
+              <div class="success-icon">✓</div>
+              <h3>Message Sent Successfully!</h3>
+              <p>
+                Thank you for reaching out. Our team will contact you within 24
+                hours.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="map-section">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106197.64417122176!2d-117.8427847!3d33.6845673!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dc60121705783f%3A0x7bca30c6414510b!2sIrvine%2C%20CA!5e0!3m2!1sen!2sus!4v1714012345678!5m2!1sen!2sus"
+      width="100%"
+      height="500"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"></iframe>
+  </section>
+
+  <!-- Grass Silhouette Divider -->
+  <div class="grass-divider">
+    <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+      <path
+        d="M0,100 L0,20 L10,0 L20,30 L30,5 L40,25 L50,15 L60,40 L70,10 L80,30 L90,20 L100,50 L110,15 L120,35 L130,25 L140,45 L150,10 L160,30 L170,20 L180,40 L190,15 L200,35 L210,25 L220,45 L230,10 L240,30 L250,20 L260,40 L270,15 L280,35 L290,25 L300,45 L310,10 L320,30 L330,20 L340,40 L350,15 L360,35 L370,25 L380,45 L390,10 L400,30 L410,20 L420,40 L430,15 L440,35 L450,25 L460,45 L470,10 L480,30 L490,20 L500,40 L510,15 L520,35 L530,25 L540,45 L550,10 L560,30 L570,20 L580,40 L590,15 L600,35 L610,25 L620,45 L630,10 L640,30 L650,20 L660,40 L670,15 L680,35 L690,25 L700,45 L710,10 L720,30 L730,20 L740,40 L750,15 L760,35 L770,25 L780,45 L790,10 L800,30 L810,20 L820,40 L830,15 L840,35 L850,25 L860,45 L870,10 L880,30 L890,20 L900,40 L910,15 L920,35 L930,25 L940,45 L950,10 L960,30 L970,20 L980,40 L990,15 L1000,35 L1010,25 L1020,45 L1030,10 L1040,30 L1050,20 L1060,40 L1070,15 L1080,35 L1090,25 L1100,45 L1110,10 L1120,30 L1130,20 L1140,40 L1150,15 L1160,35 L1170,25 L1180,45 L1190,10 L1200,30 L1200,100 Z"
+        fill="#b45309"></path>
+    </svg>
+  </div>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Contact Hero */
+    .contact-hero {
+      height: 400px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      letter-spacing: -1px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .breadcrumb a {
+      color: #fff;
+      transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary);
+    }
+
+    .sep {
+      opacity: 0.6;
+    }
+
+    /* Quick Info Section */
+    .quick-info-section {
+      padding: 100px 0;
+      background: #f8f1ec;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .info-card {
+      background: #fff;
+      padding: 50px 30px;
+      border-radius: 32px;
+      text-align: center;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+
+    .info-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .icon-box {
+      width: 70px;
+      height: 70px;
+      background: #b45309;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto 25px;
+    }
+
+    .info-card h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #111;
+    }
+
+    .info-card p {
+      color: #666;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .info-card a {
+      color: #111;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .info-card a:hover {
+      color: #b45309;
+    }
+
+    /* Main Contact Section */
+    .main-contact-section {
+      padding: 120px 0;
+      background: #fff;
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .sub-label {
+      display: block;
+      color: #b45309;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .contact-info-col h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 30px;
+      color: #111;
+    }
+
+    .contact-info-col p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 50px;
+      line-height: 1.7;
+    }
+
+    .contact-details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .detail-icon {
+      width: 50px;
+      height: 50px;
+      background: #f1f8f3;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+    }
+
+    .detail-text strong {
+      display: block;
+      font-size: 1.1rem;
+      color: #111;
+      margin-bottom: 2px;
+    }
+
+    .detail-text span {
+      color: #666;
+      font-weight: 500;
+    }
+
+    .social-circles {
+      display: flex;
+      gap: 15px;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #eee;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      transition: all 0.3s;
+    }
+
+    .social-circle:hover {
+      background: #b45309;
+      border-color: #b45309;
+      color: #fff;
+      transform: translateY(-5px);
+    }
+
+    /* Form Styles */
+    .luxe-form-wrapper {
+      background: #f8f1ec;
+      padding: 60px;
+      border-radius: 40px;
+      position: relative;
+    }
+
+    .luxe-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-item input,
+    .form-item select,
+    .form-item textarea {
+      width: 100%;
+      padding: 18px 25px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .form-item input:focus,
+    .form-item select:focus,
+    .form-item textarea:focus {
+      border-color: #b45309;
+      box-shadow: 0 10px 25px rgba(60, 122, 49, 0.1);
+    }
+
+    .luxe-submit-btn {
+      background: #b45309;
+      color: #fff;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .luxe-submit-btn:hover {
+      background: #b45309;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Success Message */
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #b45309;
+      color: #fff;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto 30px;
+    }
+
+    .success-message h3 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .success-message p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    /* Map Section */
+    .map-section {
+      line-height: 0;
+    }
+
+    /* Grass Divider */
+    .grass-divider {
+      width: 100%;
+      line-height: 0;
+      background: #fff;
+      margin-top: -1px;
+    }
+
+    .grass-divider svg {
+      width: 100%;
+      height: 80px;
+    }
+
+    @media (max-width: 1100px) {
+      .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 60px;
+      }
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .contact-hero h1 {
+        font-size: 3rem;
+      }
+      .contact-info-col h2 {
+        font-size: 2.5rem;
+      }
+      .luxe-form-wrapper {
+        padding: 40px 25px;
+      }
+    }
+  </style>
 </Layout>
 
 <script>
-  document.getElementById('contact-form')?.addEventListener('submit', (e) => {
-    e.preventDefault()
-    const form = document.getElementById('contact-form') as HTMLElement
-    const success = document.getElementById('form-success') as HTMLElement
-    form.style.display = 'none'
-    success.style.display = 'block'
-  })
+  document.getElementById("contact-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = document.getElementById("contact-form") as HTMLElement;
+    const success = document.getElementById("form-success") as HTMLElement;
+    form.style.display = "none";
+    success.style.display = "block";
+  });
 </script>

@@ -1,79 +1,494 @@
 ---
 import Layout from '../layouts/Layout.astro'
 import { client } from '../client.config.js'
-const primary = client.primaryColor || '#2d5a3d'
+
+const primary = (client.primaryColor || '#b45309').trim();
 ---
 
 <Layout title="About Us" description={`Learn about ${client.name} — trusted ${client.industry} professionals in ${client.city}, ${client.state}.`}>
 
-  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">About {client.name}</h1>
-      <p style="color:#6b7280;max-width:600px;margin:0 auto;font-size:1.05rem">
-        Trusted {client.industry} professionals proudly serving {client.city} and surrounding communities.
-      </p>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="hero-bg">
+      <img src="/images/about-hero.png" alt="Landscaping Excellence" />
+      <div class="overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Crafting Outdoor Masterpieces</h1>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">About Us</span>
+        </nav>
+      </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:3rem;align-items:center">
-      <div>
-        <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1.5rem">Who We Are</h2>
-        <p style="color:#4b5563;line-height:1.8;margin-bottom:1rem">
-          {client.name} is a locally owned and operated {client.industry} company serving {client.city}, {client.state} and the surrounding areas. We take pride in delivering high-quality work at fair prices.
-        </p>
-        <p style="color:#4b5563;line-height:1.8;margin-bottom:1rem">
-          Our team of licensed professionals brings years of hands-on experience to every project. Whether it's a small repair or a large installation, we treat every job with the same care and professionalism.
-        </p>
-        <p style="color:#4b5563;line-height:1.8;margin-bottom:2rem">
-          We are fully licensed and insured, giving our customers peace of mind on every job.
-        </p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <a href="/contact" style={`background:${primary};color:#fff;padding:0.75rem 1.75rem;border-radius:10px;font-weight:600`}>Get Free Quote</a>
-          <a href={`tel:${client.phone}`} style={`border:2px solid ${primary};color:${primary};padding:0.75rem 1.75rem;border-radius:10px;font-weight:600`}>Call Us</a>
+  <!-- Story Section -->
+  <section class="story-section">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-image">
+          <img src="/images/about-story.png" alt="Our Team at Work" />
+          <div class="experience-badge">
+            <span class="num">15+</span>
+            <span class="txt">Years of<br/>Excellence</span>
+          </div>
+        </div>
+        <div class="story-content">
+          <span class="sub-title">Our Story</span>
+          <h2>Where Passion Meets Nature</h2>
+          <p class="lead">
+            Founded on the principles of integrity and artistic vision, {client.name} has been transforming {client.city}'s landscapes for over a decade.
+          </p>
+          <p>
+            What started as a small local team has grown into a premier landscaping firm known for our attention to detail and commitment to sustainable beauty. We believe that a well-designed garden is more than just plants—it's a sanctuary for your soul and an investment in your home's legacy.
+          </p>
+          <p>
+            Our mission is simple: to bring your vision to life through innovative design, skilled craftsmanship, and a deep respect for the environment.
+          </p>
+          <div class="features">
+            <div class="feature-item">
+              <div class="f-icon">✓</div>
+              <span>Licensed & Insured Professionals</span>
+            </div>
+            <div class="feature-item">
+              <div class="f-icon">✓</div>
+              <span>Eco-Friendly Materials & Practices</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a href="/contact" class="btn-primary">Request a Quote</a>
+            <a href="/gallery" class="btn-secondary">View Our Work</a>
+          </div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
         {[
-          { number: '500+', label: 'Projects Completed' },
-          { number: '10+', label: 'Years Experience' },
-          { number: '100%', label: 'Licensed & Insured' },
-          { number: '5★', label: 'Average Rating' },
+          { icon: '🌱', num: '1.2k+', label: 'Gardens Planted' },
+          { icon: '🏡', num: '850+', label: 'Happy Families' },
+          { icon: '🏆', num: '12', label: 'Design Awards' },
+          { icon: '🌳', num: '5k+', label: 'Trees Trimmed' },
         ].map(stat => (
-          <div style="padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;text-align:center">
-            <div style={`font-size:2rem;font-weight:800;color:${primary};margin-bottom:0.35rem`}>{stat.number}</div>
-            <div style="font-size:0.875rem;color:#6b7280">{stat.label}</div>
+          <div class="stat-card">
+            <span class="stat-icon">{stat.icon}</span>
+            <span class="stat-num">{stat.num}</span>
+            <span class="stat-label">{stat.label}</span>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem;background:#f9fafb">
-    <div style="max-width:1200px;margin:0 auto">
-      <h2 style="font-size:1.75rem;font-weight:700;text-align:center;margin-bottom:2.5rem">Our Values</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+  <!-- Values Section -->
+  <section class="values-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Our Values</span>
+        <h2>The Roots of Our Business</h2>
+      </div>
+      <div class="values-grid">
         {[
-          { icon: '🤝', title: 'Integrity', desc: 'We do what we say. Honest pricing, no surprises.' },
-          { icon: '⭐', title: 'Quality', desc: 'We use quality materials and stand behind our work.' },
-          { icon: '🏠', title: 'Community', desc: `${client.city} is our home. We care about our neighbors.` },
-        ].map(v => (
-          <div style="text-align:center;padding:2rem 1.5rem;background:#fff;border-radius:12px;border:1px solid #e5e7eb">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem">{v.icon}</div>
-            <h3 style="font-weight:700;margin-bottom:0.5rem">{v.title}</h3>
-            <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">{v.desc}</p>
+          {
+            title: "Uncompromising Quality",
+            desc: "We don't believe in shortcuts. Every stone laid and every seed planted is handled with meticulous care.",
+            icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>`
+          },
+          {
+            title: "Honest Integrity",
+            desc: "Transparent pricing and clear communication are the foundations of our customer relationships.",
+            icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M8 12L11 15L16 9"/></svg>`
+          },
+          {
+            title: "Local Dedication",
+            desc: `As neighbors in ${client.city}, we are deeply invested in the beauty and health of our shared community.`,
+            icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21H21"/><path d="M3 10L12 3L21 10V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V10Z"/></svg>`
+          }
+        ].map(val => (
+          <div class="value-card">
+            <div class="v-icon" set:html={val.icon}></div>
+            <h3>{val.title}</h3>
+            <p>{val.desc}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
-    <div style="max-width:700px;margin:0 auto">
-      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Ready to Work Together?</h2>
-      <p style="opacity:0.9;margin-bottom:1.5rem">Contact us today for your free estimate.</p>
-      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Get Free Quote</a>
+  <!-- Final CTA -->
+  <section class="about-cta">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Transform Your Landscape Today</h2>
+        <p>Let's create something extraordinary together. Your dream garden is just a conversation away.</p>
+        <a href="/contact" class="btn-white">Get Your Free Estimate</a>
+      </div>
     </div>
   </section>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .sub-title {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    /* Hero Section */
+    .page-hero {
+      height: 500px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .breadcrumb a { color: #fff; text-decoration: none; transition: 0.3s; }
+    .breadcrumb a:hover { color: var(--primary); }
+    .breadcrumb .current { font-weight: 700; color: var(--primary); }
+
+    /* Story Section */
+    .story-section {
+      padding: 10rem 0;
+      background: #fdfaf7;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .story-image {
+      position: relative;
+    }
+
+    .story-image img {
+      width: 100%;
+      border-radius: 40px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    }
+
+    .experience-badge {
+      position: absolute;
+      bottom: -40px;
+      right: -20px;
+      background: var(--primary);
+      color: #fff;
+      padding: 2rem;
+      border-radius: 30px;
+      box-shadow: 0 15px 30px rgba(180, 83, 9, 0.3);
+      text-align: center;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .experience-badge .num {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .experience-badge .txt {
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .story-content h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      color: #111;
+    }
+
+    .story-content .lead {
+      font-size: 1.25rem;
+      color: #111;
+      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .story-content p {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .features {
+      margin: 2rem 0;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .f-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
+      box-shadow: 0 10px 20px rgba(180, 83, 9, 0.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(180, 83, 9, 0.3);
+    }
+
+    .btn-secondary {
+      border: 2px solid #eee;
+      color: #111;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats Section */
+    .stats-section {
+      padding: 6rem 0;
+      background: #111;
+      color: #fff;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 4rem;
+      text-align: center;
+    }
+
+    .stat-icon {
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-num {
+      display: block;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      opacity: 0.7;
+    }
+
+    /* Values Section */
+    .values-section {
+      padding: 10rem 0;
+      background: #fff;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .section-header h2 {
+      font-size: 3rem;
+      font-weight: 900;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .value-card {
+      padding: 4rem 3rem;
+      background: #fdfaf7;
+      border-radius: 40px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .value-card:hover {
+      transform: translateY(-10px);
+      background: #fff;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.05);
+    }
+
+    .v-icon {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      color: var(--primary);
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2.5rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+    }
+
+    .value-card h3 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+    }
+
+    .value-card p {
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* CTA Section */
+    .about-cta {
+      padding-bottom: 8rem;
+    }
+
+    .cta-box {
+      background: var(--primary);
+      padding: 6rem 4rem;
+      border-radius: 40px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 30px 60px rgba(180, 83, 9, 0.2);
+    }
+
+    .cta-box h2 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1px;
+    }
+
+    .cta-box p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+
+    .btn-white {
+      background: #fff;
+      color: var(--primary);
+      padding: 1.5rem 3rem;
+      border-radius: 20px;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: 0.3s;
+      display: inline-block;
+    }
+
+    .btn-white:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 992px) {
+      .story-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+      }
+      .page-hero { height: 400px; }
+      .cta-box h2 { font-size: 2.5rem; }
+    }
+  </style>
 
 </Layout>

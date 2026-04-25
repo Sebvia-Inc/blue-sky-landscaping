@@ -1,0 +1,655 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { client } from "../../client.config.js";
+
+export async function getStaticPaths() {
+  const services = client.services.map((s: string) => ({
+    title: s,
+    slug: s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, ""),
+  }));
+
+  return services.map((service: any, index: number) => ({
+    params: { slug: service.slug },
+    props: {
+      service,
+      index,
+      total: services.length,
+    },
+  }));
+}
+
+const { service, index, total } = Astro.props;
+
+// Re-generate services list to ensure it's always full and correct
+const allServicesList = client.services.map((s: string) => ({
+  title: s,
+  slug: s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, ""),
+}));
+
+const currentIndex = allServicesList.findIndex((s) => s.slug === service?.slug);
+const prevS =
+  allServicesList[
+    (currentIndex - 1 + allServicesList.length) % allServicesList.length
+  ];
+const nextS = allServicesList[(currentIndex + 1) % allServicesList.length];
+
+const primary = (client.primaryColor || "#b45309").trim();
+
+// Mock data for specific services to match the reference style
+const serviceDetails: Record<string, any> = {
+  "lawn-care": {
+    intro: `At ${client.name}, we believe a lush, green lawn is more than just a property feature—it's a reflection of your commitment to excellence. Our lawn care programs are designed to ensure your grass stays vibrant, healthy, and perfectly manicured throughout the seasons.`,
+    mainText:
+      "Our professional lawn maintenance goes beyond simple mowing. We analyze your soil, monitor grass health, and implement a comprehensive care strategy that includes precision edging, fertilization, and expert mowing techniques adjusted for optimal growth heights.",
+    callout:
+      "The key to a thriving lawn is consistency. Regular care prevents weeds from taking hold and ensures a deep, strong root system that can withstand the heat of summer.",
+    features: [
+      { title: "Sidewalk Area Cleaning", icon: "🧹" },
+      { title: "Experience Gardening", icon: "👨‍🌾" },
+      { title: "Best Design Garden", icon: "🏡" },
+    ],
+    benefits_list: [
+      "Healthy Root Systems",
+      "Weed & Pest Prevention",
+      "Improved Curb Appeal",
+      "Sustainable Growth",
+    ],
+    faqs: [
+      {
+        q: "How often should I mow my lawn?",
+        a: "For most lawns, weekly mowing is ideal during the growing season. We adjust our frequency based on the specific grass type and weather conditions.",
+      },
+      {
+        q: "When is the best time for fertilization?",
+        a: "We typically recommend a seasonal schedule, with major applications in the spring and fall to prepare your lawn for the extreme temperatures of summer and winter.",
+      },
+      {
+        q: "Do you offer organic options?",
+        a: "Yes, we have organic lawn care programs that use natural fertilizers and pet-safe weed management solutions.",
+      },
+    ],
+  },
+  default: {
+    intro: `Expert ${service?.title || "Landscaping"} services by licensed professionals in ${client.city}, ${client.state}. We provide high-quality results tailored to your specific needs.`,
+    mainText: `Our ${service?.title?.toLowerCase() || "professional"} programs are designed to enhance the beauty and health of your property. We use the latest techniques and professional-grade equipment.`,
+    callout:
+      "Quality landscaping is an investment in your property's value and your daily enjoyment of your outdoor space.",
+    features: [
+      { title: "Professional Service", icon: "⭐" },
+      { title: "Expert Team", icon: "🤝" },
+      { title: "Modern Design", icon: "✨" },
+    ],
+    benefits_list: [
+      "Increased Property Value",
+      "Enhanced Aesthetics",
+      "Sustainable Solutions",
+      "Expert Maintenance",
+    ],
+    faqs: [
+      {
+        q: "How do I start a project?",
+        a: "Contact us for a free consultation. We'll assess your space and provide a detailed quote based on your specific needs.",
+      },
+      {
+        q: "How often should I water my plants?",
+        a: "Watering needs vary by plant type and season. We provide specific instructions with every installation.",
+      },
+      {
+        q: "What are the best plants for landscaping?",
+        a: "We recommend native plants that are well-adapted to the Irvine climate for best results and lower maintenance.",
+      },
+    ],
+  },
+};
+
+const details = serviceDetails[service?.slug] || serviceDetails["default"];
+
+// Image mapping logic
+let specificImage = "/images/service-1.png";
+const sSlug = service?.slug || "";
+if (sSlug.includes("lawn")) specificImage = "/images/service-1.png";
+if (sSlug.includes("garden")) specificImage = "/images/service-design.png";
+if (sSlug.includes("irrigation")) specificImage = "/images/service-2.png";
+if (sSlug.includes("tree")) specificImage = "/images/service-3.png";
+if (sSlug.includes("mulch")) specificImage = "/images/service-maintenance.png";
+if (sSlug.includes("sod")) specificImage = "/images/service-installation.png";
+if (sSlug.includes("leaf"))
+  specificImage =
+    "https://images.unsplash.com/photo-1508197149814-0cc02e8b7f74?auto=format&fit=crop&q=80&w=1200";
+
+const recentPosts = [
+  {
+    title: "It's Time to Design Your Dream Outdoor Living",
+    date: "April 24, 2024",
+    img: "/images/service-design.png",
+  },
+  {
+    title: "The Importance of Water For Your Garden",
+    date: "April 22, 2024",
+    img: "/images/service-2.png",
+  },
+  {
+    title: "Best ways to light up your garden walkways",
+    date: "April 20, 2024",
+    img: "/images/service-3.png",
+  },
+];
+---
+
+<Layout
+  title={`${service?.title || "Service"} - Service Details`}
+  description={details.intro}
+>
+  <section class="service-hero">
+    <div class="hero-bg">
+      <img src="/images/about-hero.png" alt="Landscaping Excellence" />
+      <div class="overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>{service?.title || "Service"}</h1>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">•</span>
+          <a href="/services">Service</a>
+          <span class="sep">•</span>
+          <span class="current">{service?.title || "Details"}</span>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="service-details-section">
+    <div class="container">
+      <div class="details-layout">
+        <!-- Sidebar Left -->
+        <aside class="sidebar">
+          <div class="sidebar-widget service-menu">
+            <h3>Service</h3>
+            <ul>
+              {
+                allServicesList.map((s: any) => (
+                  <li class={s.slug === service?.slug ? "active" : ""}>
+                    <a href={`/services/${s.slug}`}>
+                      {s.title}
+                      <span class="arrow">→</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="sidebar-widget recent-posts">
+            <h3>Recent Posts</h3>
+            <div class="posts-list">
+              {
+                recentPosts.map((post) => (
+                  <a href="#" class="post-item">
+                    <img src={post.img} alt="" />
+                    <div class="post-info">
+                      <h4>{post.title}</h4>
+                      <span class="date">{post.date}</span>
+                    </div>
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content Right -->
+        <div class="main-content">
+          <div class="featured-image">
+            <img src={specificImage} alt={service?.title || "Service"} />
+          </div>
+
+          <div class="content-text">
+            <h2 class="section-title">
+              Achieve a Healthier, Greener {service?.title || "Property"} Year-Round
+            </h2>
+            <p class="intro-text">{details.intro}</p>
+
+            <div class="callout-box">
+              <p>{details.callout}</p>
+            </div>
+
+            <p class="body-text">{details.mainText}</p>
+
+            <div class="service-center">
+              <h2 class="section-title">Service Center</h2>
+              <p>
+                We provide a comprehensive range of solutions to ensure your
+                landscape remains in top condition throughout the year.
+              </p>
+
+              <div class="features-grid">
+                {
+                  details.features.map((f: any) => (
+                    <div class="feature-item">
+                      <div class="feature-icon">{f.icon}</div>
+                      <h4>{f.title}</h4>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="how-to-benefit">
+              <div class="benefit-img">
+                <img
+                  src="/images/service-details-benefits.png"
+                  alt="Benefits"
+                />
+              </div>
+              <div class="benefit-content">
+                <h3>How to Benefit</h3>
+                <p>
+                  Regular professional care ensures your property maintains its
+                  value and beauty for years to come.
+                </p>
+                <ul class="benefit-list">
+                  {
+                    details.benefits_list.map((b: string) => (
+                      <li>
+                        <span class="check">✓</span> {b}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-section">
+              <h2 class="section-title">Frequently Asked Question</h2>
+              <div class="accordion">
+                {
+                  details.faqs.map((faq: any, index: number) => (
+                    <details open={index === 0}>
+                      <summary>
+                        {faq.q}
+                        <span class="plus">+</span>
+                      </summary>
+                      <div class="answer">
+                        <p>{faq.a}</p>
+                      </div>
+                    </details>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="service-nav">
+              <a href={`/services/${prevS.slug}`} class="nav-btn prev">
+                <span class="arrow">←</span>
+                {prevS.title}
+              </a>
+              <a href={`/services/${nextS.slug}`} class="nav-btn next">
+                {nextS.title}
+                <span class="arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .service-hero {
+      height: 500px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.4)
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 5;
+    }
+    .hero-content h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+    .breadcrumb a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .breadcrumb .current {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .leaves {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background-image: url("https://www.transparenttextures.com/patterns/leaves.png");
+      opacity: 0.1;
+      z-index: 1;
+    }
+    .leaves.left {
+      top: -50px;
+      left: -100px;
+      transform: rotate(45deg);
+    }
+    .leaves.right {
+      bottom: -50px;
+      right: -100px;
+      transform: rotate(-135deg);
+    }
+
+    /* Layout */
+    .service-details-section {
+      padding: 6rem 0;
+      background: #fff;
+    }
+    .details-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    /* Sidebar */
+    .sidebar-widget {
+      background: #f8f1ec;
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .sidebar-widget h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .service-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .service-menu li {
+      margin-bottom: 1rem;
+    }
+    .service-menu a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #fff;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .service-menu li.active a {
+      background: var(--primary);
+      color: #fff;
+    }
+    .service-menu a:hover:not(.active a) {
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-item {
+      display: flex;
+      gap: 1rem;
+      text-decoration: none;
+      color: inherit;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .post-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+    .post-item h4 {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .post-item .date {
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+
+    /* Main Content */
+    .featured-image {
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+    .featured-image img {
+      width: 100%;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 1.5rem;
+    }
+    .intro-text {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .callout-box {
+      border-left: 5px solid var(--primary);
+      background: #f8f1ec;
+      padding: 2.5rem;
+      border-radius: 0 20px 20px 0;
+      margin: 2.5rem 0;
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: #333;
+    }
+
+    .body-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #666;
+      margin-bottom: 4rem;
+    }
+
+    /* Service Center Grid */
+    .service-center {
+      margin-bottom: 5rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .feature-item {
+      background: #f0fdf4;
+      padding: 2.5rem 1.5rem;
+      border-radius: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .feature-item:hover {
+      transform: translateY(-5px);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .feature-item h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #111;
+    }
+
+    /* How to Benefit */
+    .how-to-benefit {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin-bottom: 5rem;
+    }
+    .benefit-img img {
+      width: 100%;
+      border-radius: 24px;
+    }
+    .benefit-content h3 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .benefit-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 1.5rem;
+    }
+    .benefit-list li {
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+    }
+    .benefit-list .check {
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    /* FAQ Accordion */
+    .faq-section {
+      margin-bottom: 5rem;
+    }
+    .accordion details {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+    .accordion summary {
+      list-style: none;
+      padding: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+    }
+    .accordion .plus {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    .accordion .answer {
+      padding: 0 1.25rem 1.25rem;
+      line-height: 1.7;
+      color: #666;
+    }
+
+    /* Nav Buttons */
+    .service-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding-top: 3rem;
+      border-top: 1px solid #eee;
+    }
+    .nav-btn {
+      padding: 1.5rem;
+      border: 2px solid #eee;
+      border-radius: 16px;
+      text-decoration: none;
+      color: #111;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+    }
+    .nav-btn.next {
+      justify-content: flex-end;
+    }
+    .nav-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    @media (max-width: 1024px) {
+      .details-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        order: 2;
+      }
+      .main-content {
+        order: 1;
+      }
+      .how-to-benefit {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

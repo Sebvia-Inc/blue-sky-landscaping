@@ -5,7 +5,7 @@ const { title, description } = Astro.props;
 const fullTitle = `${title} | ${client.name}`;
 const metaDesc = description || client.tagline;
 const currentPath = Astro.url.pathname;
-const primary = client.primaryColor || "#2d5a3d";
+const primary = client.primaryColor || "#b45309";
 ---
 
 <!doctype html>
@@ -22,6 +22,12 @@ const primary = client.primaryColor || "#2d5a3d";
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      is:inline></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      is:inline></script>
     <style
       set:html={`
     :root {
@@ -153,10 +159,163 @@ const primary = client.primaryColor || "#2d5a3d";
       .header-left > .info-item, .header-right > .social-links { display: none; }
       .nav-wrapper { padding: 0 1.5rem; }
     }
+
+    /* Custom Cursor Styles */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+    }
+
+    .cursor-ring {
+      width: 40px;
+      height: 40px;
+      border: 1.5px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
+                  height 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
+                  background 0.3s ease, 
+                  border-color 0.3s ease;
+    }
+
+    .cursor-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body:hover .cursor-dot, body:hover .cursor-ring {
+      opacity: 1;
+    }
+
+    .cursor-active .cursor-ring {
+      transform: scale(1.5);
+      background: rgba(var(--primary-rgb), 0.1);
+      border-color: transparent;
+    }
+
+    .cursor-view .cursor-ring {
+      width: 100px;
+      height: 100px;
+      background: #000;
+      border-color: transparent;
+    }
+
+    .cursor-view .cursor-text {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .cursor-text-hover .cursor-ring {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      mix-blend-mode: difference;
+      border-color: transparent;
+    }
+
+    .cursor-text-hover .cursor-dot, .cursor-view .cursor-dot {
+      opacity: 0 !important;
+    }
+
+    @media (max-width: 1024px) {
+      .cursor-dot, .cursor-ring { display: none !important; }
+    }
+
+    /* Footer Styles */
+    footer {
+      background: #0d4429;
+      color: #d1ccc5;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('https://www.transparenttextures.com/patterns/leaves.png');
+      opacity: 0.05;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .grass-decoration {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      display: block;
+      z-index: 20;
+      pointer-events: none;
+      margin-bottom: -2px; /* Slight overlap to prevent gaps */
+    }
+
+    footer .logo { color: #fff; }
+    footer .logo span { color: #fff; font-size: 1.2rem; }
+
+    footer a { color: #d1ccc5; transition: color 0.2s; }
+    footer a:hover { color: #b45309; }
+
+    footer h4 { 
+      color: #fff; 
+      font-size: 1rem; 
+      margin-bottom: 1.5rem; 
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    
+    footer ul { list-style: none; gap: 0.75rem; }
+    footer ul li { font-size: 0.95rem; }
+
+    footer .social-links a:hover { 
+      background: #b45309 !important;
+      transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+      .grass-decoration {
+        height: 60px;
+      }
+      
+      footer .container {
+        padding: 2rem 1.5rem !important;
+      }
+      
+      footer > div {
+        grid-template-columns: 1fr !important;
+      }
+    }
   `}
     ></style>
   </head>
   <body style="min-height:100vh; display:flex; flex-direction:column">
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring">
+      <span class="cursor-text">View</span>
+    </div>
     <header class="header-container">
       <div class="nav-wrapper">
         <div class="header-left">
@@ -219,7 +378,7 @@ const primary = client.primaryColor || "#2d5a3d";
             <a href="#"
               ><svg viewBox="0 0 24 24"
                 ><path
-                  d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
+                  d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417a9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
                 ></path></svg
               ></a
             >
@@ -274,128 +433,121 @@ const primary = client.primaryColor || "#2d5a3d";
 
     <main style="flex:1"><slot /></main>
 
-    <footer style="background:#0f172a;color:#94a3b8;margin-top:0">
-      <div class="container" style="padding:5rem 1.5rem">
+    <footer
+      style={`background: linear-gradient(to bottom, #f8f1ec 0%, #ede3db 100%); color: #1a1a1a; padding: 6rem 1.5rem 2rem; position: relative; overflow: hidden;`}
+    >
+      <div
+        class="container"
+        style="max-width: 1400px; position: relative; z-index: 2;"
+      >
         <div
-          style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:3rem;margin-bottom:4rem"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem; margin-bottom: 4rem;"
         >
+          <!-- Location 1 -->
           <div>
-            <a href="/" class="logo" style="margin-bottom:1.5rem">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                ><path
-                  d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.28 2 8 0 3.87-3.13 7-7 7h-3"
-                ></path><path d="M7 20h4"></path><path
-                  d="M10 20c0-1.71-3.94-3.13-3.94-3.13C4.7 16.67 3 15.13 3 13.31c0-1.84 1.66-3.31 3.31-3.31V20Z"
-                ></path></svg
+            <h3
+              style={`color: ${primary}; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;`}
+            >
+              {client.name}
+            </h3>
+            <p style="opacity: 0.8; line-height: 1.8; margin-bottom: 1rem;">
+              USA — {client.address},<br />
+              {client.city}, {client.state}
+            </p>
+            <p style="margin-bottom: 0.5rem;">
+              <a
+                href={`mailto:${client.email}`}
+                style="text-decoration: none; color: inherit; border-bottom: 1px solid rgba(0,0,0,0.1);"
+                >{client.email}</a
               >
-              <span style="color:#fff">{client.name}</span>
-            </a>
-            <p style="line-height:1.7;margin-bottom:1.5rem">{client.tagline}</p>
-            <div class="social-links" style="color:#fff">
-              <a href="#"
-                ><svg viewBox="0 0 24 24" width="20"
-                  ><path
-                    d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"
+            </p>
+            <p>
+              <a
+                href={`tel:${client.phone}`}
+                style="text-decoration: none; color: inherit;">{client.phone}</a
+              >
+            </p>
+          </div>
+
+          <!-- Location 2 (Support) -->
+          <div>
+            <h3
+              style={`color: ${primary}; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;`}
+            >
+              Support
+            </h3>
+            <p style="opacity: 0.8; line-height: 1.8; margin-bottom: 1rem;">
+              Our dedicated support team is available <br />
+              to help you with any landscaping needs.
+            </p>
+            <p style="margin-bottom: 0.5rem;">
+              <a
+                href="/contact"
+                style="text-decoration: none; color: inherit; border-bottom: 1px solid rgba(0,0,0,0.1);"
+                >Contact Support</a
+              >
+            </p>
+            <p>{client.phone}</p>
+          </div>
+
+          <!-- Newsletter -->
+          <div style="grid-column: span 2;">
+            <h3
+              style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;"
+            >
+              Subscribe to our latest insights
+            </h3>
+            <p style="opacity: 0.7; line-height: 1.6; margin-bottom: 2rem;">
+              Subscribe to our Newsletter Event right now to be updated on
+              special offers Gardening and Landscaping.
+            </p>
+            <div style="position: relative; max-width: 500px;">
+              <input
+                type="email"
+                placeholder="Email Address"
+                style="width: 100%; background: #fff; border: 1px solid rgba(0,0,0,0.1); padding: 1.25rem 4rem 1.25rem 1.5rem; border-radius: 50px; color: #1a1a1a; outline: none;"
+              />
+              <button
+                style={`position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px; background: ${primary}; border: none; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px ${primary}33;`}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"
                   ></path></svg
-                ></a
-              >
-              <a href="#"
-                ><svg viewBox="0 0 24 24" width="20"
-                  ><path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
-                  ></path></svg
-                ></a
-              >
+                >
+              </button>
             </div>
           </div>
-          <div>
-            <h4 style="color:#fff;font-size:1.1rem;margin-bottom:1.5rem">
-              Quick Links
-            </h4>
-            <ul style="list-style:none;display:grid;gap:0.75rem">
-              <li><a href="/" style="transition:color 0.2s">Home</a></li>
-              <li>
-                <a href="/services" style="transition:color 0.2s"
-                  >Our Services</a>
-              </li>
-              <li>
-                <a href="/about" style="transition:color 0.2s">About Us</a>
-              </li>
-              <li>
-                <a href="/gallery" style="transition:color 0.2s"
-                  >Project Gallery</a>
-              </li>
-              <li>
-                <a href="/contact" style="transition:color 0.2s">Contact Us</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 style="color:#fff;font-size:1.1rem;margin-bottom:1.5rem">
-              Contact Info
-            </h4>
-            <ul style="list-style:none;display:grid;gap:1rem">
-              <li style="display:flex;gap:0.75rem">
-                <svg
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"
-                  ></path></svg
-                >
-                {client.address}, {client.city}, {client.state}
-              </li>
-              <li style="display:flex;gap:0.75rem">
-                <svg
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"
-                  ></path></svg
-                >
-                {client.phone}
-              </li>
-              <li style="display:flex;gap:0.75rem">
-                <svg
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.11,4 20,4Z"
-                  ></path></svg
-                >
-                {client.email}
-              </li>
-            </ul>
-          </div>
         </div>
+
         <div
-          style="border-top:1px solid rgba(255,255,255,0.1);padding-top:2rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:0.85rem"
+          style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; opacity: 0.6;"
         >
           <p>
-            © {new Date().getFullYear()}
-            {client.name}. All rights reserved.
+            © Copyright {new Date().getFullYear()}. All rights reserved. {
+              client.name
+            }
           </p>
-          <div style="display:flex;gap:1.5rem">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+          <div style="display: flex; gap: 2rem;">
+            <a href="/privacy" style="color: inherit; text-decoration: none;"
+              >Privacy Policy</a
+            >
+            <a href="/terms" style="color: inherit; text-decoration: none;"
+              >Terms & Services</a
+            >
           </div>
         </div>
       </div>
-    </footer>
+    </footer>>
 
-    <script>
+    <script is:inline>
       const menuBtn = document.getElementById("menu-btn");
       const closeBtn = document.getElementById("close-menu");
       const mobileNav = document.getElementById("mobile-nav");
@@ -407,6 +559,73 @@ const primary = client.primaryColor || "#2d5a3d";
       closeBtn?.addEventListener("click", () => {
         if (mobileNav) mobileNav.style.display = "none";
       });
+
+      // GSAP Custom Cursor
+      const dot = document.querySelector(".cursor-dot");
+      const ring = document.querySelector(".cursor-ring");
+      const interactiveElements =
+        "a, button, .service-card, .btn-primary, .btn-outline";
+
+      if (dot && ring && window.innerWidth > 1024) {
+        gsap.set(dot, { xPercent: -50, yPercent: -50 });
+        gsap.set(ring, { xPercent: -50, yPercent: -50 });
+
+        const xToDot = gsap.quickTo(dot, "x", { duration: 0.1, ease: "none" });
+        const yToDot = gsap.quickTo(dot, "y", { duration: 0.1, ease: "none" });
+
+        const xToRing = gsap.quickTo(ring, "x", {
+          duration: 0.4,
+          ease: "power3",
+        });
+        const yToRing = gsap.quickTo(ring, "y", {
+          duration: 0.4,
+          ease: "power3",
+        });
+
+        window.addEventListener("mousemove", (e) => {
+          xToDot(e.clientX);
+          yToDot(e.clientY);
+          xToRing(e.clientX);
+          yToRing(e.clientY);
+        });
+
+        document.querySelectorAll(interactiveElements).forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            document.body.classList.add("cursor-active");
+            gsap.to(ring, { scale: 1.5, duration: 0.3 });
+            gsap.to(dot, { scale: 0, duration: 0.3 });
+          });
+          el.addEventListener("mouseleave", () => {
+            document.body.classList.remove("cursor-active");
+            gsap.to(ring, { scale: 1, duration: 0.3 });
+            gsap.to(dot, { scale: 1, duration: 0.3 });
+          });
+        });
+
+        // "View" Cursor for images and service cards
+        const viewElements = "img, .hero-image-wrapper, .service-card";
+        document.querySelectorAll(viewElements).forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            document.body.classList.add("cursor-view");
+            gsap.to(ring, { scale: 1, duration: 0.3 });
+          });
+          el.addEventListener("mouseleave", () => {
+            document.body.classList.remove("cursor-view");
+          });
+        });
+
+        // "Inverted" Cursor for text
+        const textElements = "h1, h2, h3, h4, h5, h6, .font-heading";
+        document.querySelectorAll(textElements).forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            document.body.classList.add("cursor-text-hover");
+            gsap.to(ring, { scale: 1, duration: 0.3 });
+          });
+          el.addEventListener("mouseleave", () => {
+            document.body.classList.remove("cursor-text-hover");
+          });
+        });
+      }
     </script>
   </body>
 </html>

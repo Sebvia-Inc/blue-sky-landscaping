@@ -1,55 +1,419 @@
 ---
-import Layout from '../../layouts/Layout.astro'
-import { client } from '../../client.config.js'
+import Layout from "../../layouts/Layout.astro";
+import { client } from "../../client.config.js";
 
-let posts = []
+let cmsPosts = [];
 try {
-  const res = await fetch(`${client.cmsUrl}/api/blog?where[tenant.slug][equals]=${client.tenantSlug}&limit=20&sort=-createdAt`)
-  posts = (await res.json()).docs || []
+  const res = await fetch(
+    `${client.cmsUrl}/api/posts?where[tenant.slug][equals]=${client.tenantSlug}&limit=12`,
+  );
+  cmsPosts = (await res.json()).docs || [];
 } catch {}
 
-const primary = client.primaryColor || '#2d5a3d'
+const localPosts = [
+  {
+    title:
+      "Small Garden, Big Impact Maximizing Space with Creative Landscaping",
+    excerpt:
+      "Discover how to transform even the smallest outdoor spaces into breathtaking sanctuaries using vertical gardens and multi-functional features.",
+    date: "September 4, 2024",
+    category: "Design",
+    author: "James Miller",
+    image: "/images/blog/spring-tips.png",
+    slug: "spring-landscaping-tips",
+  },
+  {
+    title: "Sustainable Gardening Eco-Friendly Landscaping Ideas",
+    excerpt:
+      "Learn the principles of ecological design and how to create a garden that thrives with minimal resources while supporting local biodiversity.",
+    date: "September 4, 2024",
+    category: "Sustainability",
+    author: "James Miller",
+    image: "/images/blog/drought-tolerant.png",
+    slug: "drought-tolerant-gardens",
+  },
+  {
+    title: "Water Features Adding Serenity to Your Garden",
+    excerpt:
+      "From minimalist ponds to architectural waterfalls, explore how water elements can enhance the peace and tranquility of your landscape.",
+    date: "September 4, 2024",
+    category: "Design",
+    author: "James Miller",
+    image: "/images/blog/lighting-trends.png",
+    slug: "outdoor-lighting-trends",
+  },
+  {
+    title: "The Benefits of Professional Garden Landscaping",
+    excerpt:
+      "Why hiring a professional designer is an investment that pays off in both property value and personal wellbeing.",
+    date: "September 4, 2024",
+    category: "Professional",
+    author: "James Miller",
+    image: "/images/service-1.png",
+    slug: "professional-benefits",
+  },
+  {
+    title: "Revamp Your Garden Latest Landscaping Trends for 2024",
+    excerpt:
+      "Stay ahead of the curve with our curated list of the most exciting design trends shaping the world of modern landscaping this year.",
+    date: "September 4, 2024",
+    category: "Trends",
+    author: "James Miller",
+    image: "/images/service-2.png",
+    slug: "trends-2024",
+  },
+  {
+    title: "Garden Landscaping Innovations What's New in Outdoor Design",
+    excerpt:
+      "Exploring the cutting-edge materials and technologies that are redefining how we interact with our outdoor environments.",
+    date: "September 4, 2024",
+    category: "Innovation",
+    author: "James Miller",
+    image: "/images/service-3.png",
+    slug: "innovations",
+  },
+];
+
+const displayPosts = cmsPosts.length > 0 ? cmsPosts : localPosts;
+const primary = (client.primaryColor || "#b45309").trim();
 ---
 
-<Layout title="Blog" description={`Tips and news from ${client.name}.`}>
-
-  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Blog & Tips</h1>
-      <p style="color:#6b7280;font-size:1.05rem">Expert advice and news from {client.name}.</p>
+<Layout
+  title="Latest Blog"
+  description={`Expert landscaping tips and inspiration from ${client.name}.`}
+>
+  <!-- Latest Blog Hero -->
+  <section class="blog-hero">
+    <div class="hero-bg">
+      <img src="/images/blog-hero.png" alt="Lush Greenery" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="container-custom">
+      <div class="hero-content">
+        <h1>Latest Blog</h1>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">/</span>
+          <span>Blog</span>
+        </nav>
+      </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto">
-      {posts.length > 0 ? (
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem">
-          {posts.map((post: any) => (
-            <a href={`/blog/${post.slug}`} style="display:block;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;text-decoration:none;color:#111">
-              {post.image?.url && (
-                <div style="aspect-ratio:16/9;overflow:hidden;background:#f3f4f6">
-                  <img src={post.image.url} alt={post.title} style="width:100%;height:100%;object-fit:cover" />
-                </div>
-              )}
-              <div style="padding:1.25rem">
-                <p style="font-size:0.8rem;color:#9ca3af;margin-bottom:0.5rem">
-                  {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}
-                </p>
-                <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;line-height:1.4">{post.title}</h2>
-                {post.excerpt && <p style="color:#6b7280;font-size:0.875rem;line-height:1.5">{post.excerpt}</p>}
-                <p style={`color:${primary};font-size:0.875rem;font-weight:600;margin-top:0.75rem`}>Read more →</p>
+  <!-- Blog Grid Section -->
+  <section class="blog-grid-section">
+    <div class="container">
+      <div
+        class="blog-grid-three-col"
+        style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 4rem 2.5rem !important;"
+      >
+        {
+          displayPosts.map((post: any) => (
+            <article class="blog-card-new">
+              <div class="card-image-wrapper">
+                <img src={post.image?.url || post.image} alt={post.title} />
               </div>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div style="text-align:center;padding:4rem;color:#6b7280">
-          <div style="font-size:4rem;margin-bottom:1rem">📝</div>
-          <p style="font-size:1.1rem;font-weight:500;margin-bottom:0.5rem">Blog posts coming soon!</p>
-          <p style="font-size:0.875rem">Check back for tips and updates from our team.</p>
-        </div>
-      )}
+              <div class="card-body">
+                <div class="card-meta-row">
+                  <span class="meta-item">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </>
+                    </svg>
+                    {post.author || "James Miller"}
+                  </span>
+                  <span class="meta-item">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <rect
+                          x="3"
+                          y="4"
+                          width="18"
+                          height="18"
+                          rx="2"
+                          ry="2"
+                        />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </>
+                    </svg>
+                    {post.date}
+                  </span>
+                </div>
+                <h3 class="card-title">
+                  <a href={`/blog/${post.slug}`}>{post.title}</a>
+                </h3>
+                <a href={`/blog/${post.slug}`} class="read-more-link">
+                  Read More
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <>
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </>
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
 
+  <!-- Grass Silhouette Divider -->
+  <div class="grass-divider">
+    <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+      <path
+        d="M0,100 L0,20 L10,0 L20,30 L30,5 L40,25 L50,15 L60,40 L70,10 L80,30 L90,20 L100,50 L110,15 L120,35 L130,25 L140,45 L150,10 L160,30 L170,20 L180,40 L190,15 L200,35 L210,25 L220,45 L230,10 L240,30 L250,20 L260,40 L270,15 L280,35 L290,25 L300,45 L310,10 L320,30 L330,20 L340,40 L350,15 L360,35 L370,25 L380,45 L390,10 L400,30 L410,20 L420,40 L430,15 L440,35 L450,25 L460,45 L470,10 L480,30 L490,20 L500,40 L510,15 L520,35 L530,25 L540,45 L550,10 L560,30 L570,20 L580,40 L590,15 L600,35 L610,25 L620,45 L630,10 L640,30 L650,20 L660,40 L670,15 L680,35 L690,25 L700,45 L710,10 L720,30 L730,20 L740,40 L750,15 L760,35 L770,25 L780,45 L790,10 L800,30 L810,20 L820,40 L830,15 L840,35 L850,25 L860,45 L870,10 L880,30 L890,20 L900,40 L910,15 L920,35 L930,25 L940,45 L950,10 L960,30 L970,20 L980,40 L990,15 L1000,35 L1010,25 L1020,45 L1030,10 L1040,30 L1050,20 L1060,40 L1070,15 L1080,35 L1090,25 L1100,45 L1110,10 L1120,30 L1130,20 L1140,40 L1150,15 L1160,35 L1170,25 L1180,45 L1190,10 L1200,30 L1200,100 Z"
+        fill="#b45309"></path>
+    </svg>
+  </div>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+      padding: 0 2rem !important;
+    }
+
+    /* Blog Hero */
+    .blog-hero {
+      height: 400px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      letter-spacing: -1px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .breadcrumb a {
+      color: #fff;
+      transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary);
+    }
+
+    .sep {
+      opacity: 0.6;
+    }
+
+    /* Blog Grid Section */
+    .blog-grid-section {
+      padding: 120px 0;
+      background: #f8f1ec;
+      display: block !important;
+    }
+
+    .blog-grid-three-col {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: 50px 30px !important;
+      width: 100% !important;
+    }
+
+    .blog-card-new {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .card-image-wrapper {
+      width: 100%;
+      aspect-ratio: 16/11;
+      overflow: hidden;
+      border-radius: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .blog-card-new:hover .card-image-wrapper img {
+      transform: scale(1.08);
+    }
+
+    .card-body {
+      padding: 0 5px;
+    }
+
+    .card-meta-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-item svg {
+      color: #b45309;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      min-height: 4rem;
+    }
+
+    .card-title a {
+      color: #111;
+      transition: 0.3s;
+    }
+
+    .card-title a:hover {
+      color: #b45309;
+    }
+
+    .read-more-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #b45309;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      margin-top: auto;
+      width: fit-content;
+    }
+
+    .read-more-link:hover {
+      background: #111;
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Grass Divider */
+    .grass-divider {
+      width: 100%;
+      line-height: 0;
+      background: #f8f1ec;
+      margin-top: -1px;
+    }
+
+    .grass-divider svg {
+      width: 100%;
+      height: 80px;
+    }
+
+    @media (max-width: 1100px) {
+      .blog-grid-three-col {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .blog-grid-three-col {
+        grid-template-columns: 1fr !important;
+      }
+      .hero-content h1 {
+        font-size: 3rem;
+      }
+      .blog-grid-section {
+        padding: 60px 0;
+      }
+    }
+  </style>
 </Layout>

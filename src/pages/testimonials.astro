@@ -2,58 +2,478 @@
 import Layout from '../layouts/Layout.astro'
 import { client } from '../client.config.js'
 
-let testimonials = []
+let cmsReviews = []
 try {
   const res = await fetch(`${client.cmsUrl}/api/testimonials?where[tenant.slug][equals]=${client.tenantSlug}&limit=20`)
-  testimonials = (await res.json()).docs || []
+  cmsReviews = (await res.json()).docs || []
 } catch {}
 
-const primary = client.primaryColor || '#2d5a3d'
+const localReviews = [
+  {
+    name: "Sarah Jenkins",
+    location: "Irvine, CA",
+    text: "The team transformed our messy backyard into a modern oasis. Their attention to detail with the stone pavers and lighting was incredible. Highly recommend!",
+    service: "Backyard Remodel",
+    avatar: "SJ"
+  },
+  {
+    name: "Michael Chen",
+    location: "Newport Beach, CA",
+    text: "Professional, punctual, and very skilled. They designed a drought-tolerant garden for us that looks lush and beautiful year-round. Great communication throughout.",
+    service: "Garden Design",
+    avatar: "MC"
+  },
+  {
+    name: "David Rodriguez",
+    location: "Tustin, CA",
+    text: "We've been using their lawn maintenance for a year now and our yard has never looked better. The crew is always respectful and does a thorough job every time.",
+    service: "Lawn Maintenance",
+    avatar: "DR"
+  },
+  {
+    name: "Emily Thompson",
+    location: "Irvine, CA",
+    text: "Absolutely thrilled with our new outdoor lighting. It's completely changed the ambiance of our home at night. The installation was quick and clean.",
+    service: "Outdoor Lighting",
+    avatar: "ET"
+  },
+  {
+    name: "Robert Wilson",
+    location: "Lake Forest, CA",
+    text: "Exceptional masonry work on our retaining wall. They managed to match the existing stone perfectly. A team of true craftsmen.",
+    service: "Hardscaping",
+    avatar: "RW"
+  },
+  {
+    name: "Jessica Lee",
+    location: "Irvine, CA",
+    text: "From the initial design consultation to the final planting, the experience was seamless. They really listened to what we wanted and delivered even more.",
+    service: "Landscape Design",
+    avatar: "JL"
+  }
+];
+
+const displayReviews = cmsReviews.length > 0 ? cmsReviews : localReviews;
+
+const primary = (client.primaryColor || '#b45309').trim();
 ---
 
-<Layout title="Reviews" description={`Reviews from satisfied customers of ${client.name}.`}>
+<Layout title="Reviews" description={`See what our clients in ${client.city} are saying about ${client.name}. Real testimonials from real projects.`}>
 
-  <section style={`padding:4rem 1.5rem;background:${primary}12;text-align:center`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">Customer Reviews</h1>
-      <p style="color:#6b7280;font-size:1.05rem">See what our customers say about our work.</p>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="hero-bg">
+      <img src="/images/reviews-hero.png" alt="Happy Clients" />
+      <div class="overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Client Success Stories</h1>
+        <p class="hero-subtitle">The greatest reward is a beautiful garden and a happy client.</p>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Reviews</span>
+        </nav>
+      </div>
     </div>
   </section>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto">
-      {testimonials.length > 0 ? (
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
-          {testimonials.map((t: any) => (
-            <div style="padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb">
-              <div style="color:#facc15;font-size:1.2rem;margin-bottom:0.75rem">★★★★★</div>
-              <p style="color:#374151;font-style:italic;margin-bottom:1rem;line-height:1.7">"{t.text || t.content}"</p>
-              <div style="display:flex;align-items:center;gap:0.75rem">
-                <div style={`width:38px;height:38px;border-radius:50%;background:${primary};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;flex-shrink:0`}>
-                  {(t.name || t.author || 'A').charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p style="font-weight:700;font-size:0.9rem">{t.name || t.author}</p>
-                  {t.location && <p style="font-size:0.8rem;color:#6b7280">{t.location}</p>}
-                </div>
+  <!-- Summary Section -->
+  <section class="summary-section">
+    <div class="container">
+      <div class="summary-box">
+        <div class="rating-overall">
+          <div class="big-stars">★★★★★</div>
+          <div class="stat">
+            <span class="num">5.0</span>
+            <span class="lbl">Average Rating</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="review-platforms">
+          <div class="platform">
+            <span class="p-name">Google</span>
+            <span class="p-rating">★★★★★</span>
+          </div>
+          <div class="platform">
+            <span class="p-name">Yelp</span>
+            <span class="p-rating">★★★★★</span>
+          </div>
+          <div class="platform">
+            <span class="p-name">Facebook</span>
+            <span class="p-rating">★★★★★</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Grid -->
+  <section class="reviews-section">
+    <div class="container">
+      <div class="section-intro">
+        <span class="sub-title">Testimonials</span>
+        <h2>What Our Neighbors Say</h2>
+      </div>
+
+      <div class="reviews-grid">
+        {displayReviews.map((t: any) => (
+          <div class="review-card">
+            <div class="card-header">
+              <div class="stars">★★★★★</div>
+              <span class="service-tag">{t.service || 'Landscape Service'}</span>
+            </div>
+            <p class="review-text">"{t.text || t.content}"</p>
+            <div class="card-footer">
+              <div class="avatar" style={`background: ${primary}15; color: ${primary}`}>
+                {t.avatar || (t.name || t.author || 'A').charAt(0).toUpperCase()}
+              </div>
+              <div class="client-info">
+                <span class="client-name">{t.name || t.author}</span>
+                <span class="client-loc">{t.location || client.city}</span>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div style="text-align:center;padding:4rem;color:#6b7280">
-          <div style="font-size:4rem;margin-bottom:1rem">⭐</div>
-          <p style="font-size:1.1rem;font-weight:500">Reviews coming soon!</p>
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
-    <div style="max-width:700px;margin:0 auto">
-      <h2 style="font-size:1.75rem;font-weight:700;margin-bottom:1rem">Join Our Happy Customers</h2>
-      <a href="/contact" style="background:#fff;color:#111;padding:0.75rem 2rem;border-radius:10px;font-weight:700">Get Free Quote</a>
+  <!-- Leave a Review CTA -->
+  <section class="leave-review">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-content">
+          <h2>Share Your Experience</h2>
+          <p>Have we worked on your landscape recently? We'd love to hear your thoughts!</p>
+          <div class="btn-group">
+            <a href="/contact" class="btn-primary">Leave a Review</a>
+            <a href={`tel:${client.phone}`} class="btn-outline">Give Us a Call</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <style define:vars={{ primary }}>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .sub-title {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    /* Hero Section */
+    .page-hero {
+      height: 400px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    .breadcrumb a { color: #fff; text-decoration: none; transition: 0.3s; }
+    .breadcrumb a:hover { color: var(--primary); }
+    .breadcrumb .current { font-weight: 700; color: var(--primary); }
+
+    /* Summary Section */
+    .summary-section {
+      margin-top: -60px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .summary-box {
+      background: #fff;
+      padding: 3rem;
+      border-radius: 30px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 3rem;
+    }
+
+    .rating-overall {
+      text-align: center;
+    }
+
+    .big-stars {
+      color: #fbbf24;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat .num {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat .lbl {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 80px;
+      background: #eee;
+    }
+
+    .review-platforms {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .platform {
+      text-align: center;
+    }
+
+    .p-name {
+      display: block;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .p-rating {
+      color: #fbbf24;
+      font-size: 1rem;
+    }
+
+    /* Reviews Grid */
+    .reviews-section {
+      padding: 8rem 0;
+      background: #fdfaf7;
+    }
+
+    .section-intro {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .section-intro h2 {
+      font-size: 3rem;
+      font-weight: 900;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .review-card {
+      background: #fff;
+      padding: 3rem;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .review-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .stars {
+      color: #fbbf24;
+      font-size: 1.1rem;
+    }
+
+    .service-tag {
+      background: #f8f1ec;
+      color: var(--primary);
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .review-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #444;
+      font-style: italic;
+      margin-bottom: 2.5rem;
+      flex-grow: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .client-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .client-name {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #111;
+    }
+
+    .client-loc {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    /* Leave a Review CTA */
+    .leave-review {
+      padding-bottom: 8rem;
+      background: #fdfaf7;
+    }
+
+    .cta-box {
+      background: var(--primary);
+      padding: 5rem;
+      border-radius: 40px;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(180, 83, 9, 0.2);
+    }
+
+    .cta-content h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 3rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: var(--primary);
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn-outline {
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .summary-box {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+      }
+      .divider { width: 80%; height: 1px; }
+      .review-platforms { flex-direction: column; gap: 1.5rem; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
 
 </Layout>

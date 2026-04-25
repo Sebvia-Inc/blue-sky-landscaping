@@ -1,0 +1,356 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { client } from "../../client.config.js";
+
+const primary = (client.primaryColor || "#b45309").trim();
+
+const servicesList = client.services.map((s: string, i: number) => {
+  const slug = s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  // Mapping images
+  let image = "/images/service-1.png";
+  if (slug.includes("garden")) image = "/images/service-design.png";
+  if (slug.includes("irrigation")) image = "/images/service-2.png";
+  if (slug.includes("tree")) image = "/images/service-3.png";
+  if (slug.includes("mulch")) image = "/images/service-maintenance.png";
+  if (slug.includes("sod")) image = "/images/service-installation.png";
+  if (slug.includes("leaf")) image = "/images/service-leaf-removal.png";
+
+  // Mapping SVG Icons
+  const icons = [
+    // Lawn Care
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20h10"/><path d="M10 20v-5a2 2 0 0 1 4 0v5"/><circle cx="12" cy="7" r="3"/><path d="m5 10 2 2"/><path d="m19 10-2 2"/></svg>`,
+    // Garden Design
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 10 4 4"/><path d="m14 12-2-2"/><path d="M14 12h.01"/><path d="M20 7h-2"/><path d="M20 11h-2"/><path d="M20 15h-2"/><path d="M20 19h-2"/><path d="M4 11V9"/><path d="M4 15v-2"/><path d="M4 19v-2"/><path d="M4 7V5"/><path d="M8 11V9"/><path d="M8 15v-2"/><path d="M8 19v-2"/><path d="M8 7V5"/><path d="M12 15v-2"/><path d="M12 19v-2"/><path d="M12 7V5"/></svg>`,
+    // Irrigation
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10c0-4.42-3.58-8-8-8s-8 3.58-8 8c0 6 8 10 8 10Z"/><path d="M12 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>`,
+    // Tree Trimming
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m20 10-8 8-4-4"/><path d="M14.5 14h-5"/><path d="m16.5 18.5-15-15"/></svg>`,
+    // Mulching
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-7"/><path d="M7 10h10"/><path d="M7 14h10"/><path d="M7 6h10"/></svg>`,
+    // Sod Installation
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>`,
+    // Leaf Removal
+    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20L7 20C4.23858 20 2 17.7614 2 15C2 12.2386 4.23858 10 7 10L11 10"/><path d="M13 4L17 4C19.7614 4 22 6.23858 22 9C22 11.7614 19.7614 14 17 14L13 14"/><path d="M8 10L16 10"/><path d="M16 14L8 14"/><path d="M12 20L12 4"/></svg>`,
+  ];
+
+  return {
+    title: s,
+    slug,
+    image,
+    icon: icons[i % icons.length],
+    description: `Professional ${s.toLowerCase()} solutions tailored for your home or business in ${client.city}.`,
+  };
+});
+---
+
+<Layout
+  title="Our Services"
+  description={`Explore our professional ${client.industry} services in ${client.city}, ${client.state}.`}
+>
+  <!-- Hero Section -->
+  <section class="services-hero">
+    <div class="hero-bg">
+      <img src="/images/about-hero.png" alt="Landscaping Excellence" />
+      <div class="overlay"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Our Services</h1>
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Our Services</span>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Grid Section -->
+  <section class="services-grid-section">
+    <div class="container">
+      <div class="services-grid">
+        {
+          servicesList.map((service) => (
+            <div class="service-card">
+              <div class="card-image">
+                <img src={service.image} alt={service.title} />
+              </div>
+              <div class="card-content">
+                <div class="icon-badge">
+                  <Fragment set:html={service.icon} />
+                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <a href={`/services/${service.slug}`} class="read-more">
+                  Read More <span class="arrow">→</span>
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <style define:vars={{ primary }}>
+    /* Hero Section */
+    .services-hero {
+      height: 500px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.4)
+      );
+    }
+
+    .hero-content h1 {
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      letter-spacing: -2px;
+      text-transform: capitalize;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+
+    .breadcrumb a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary);
+    }
+
+    .breadcrumb .sep {
+      opacity: 0.4;
+    }
+
+    .breadcrumb .current {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .leaves {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background-image: url("https://www.transparenttextures.com/patterns/leaves.png");
+      opacity: 0.1;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .leaves.left {
+      top: -150px;
+      left: -200px;
+      transform: rotate(45deg);
+    }
+
+    .leaves.right {
+      bottom: -150px;
+      right: -200px;
+      transform: rotate(-135deg);
+    }
+
+    /* Grid Section */
+    .services-grid-section {
+      padding: 8rem 0;
+      background: #f8f1ec; /* Creamy beige background */
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 4rem 2.5rem;
+    }
+
+    .service-card {
+      background: #fff;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.04);
+      transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .service-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image {
+      height: 280px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-image::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .service-card:hover .card-image img {
+      transform: scale(1.1);
+    }
+
+    .card-content {
+      padding: 3rem 2.5rem;
+      text-align: center;
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+    }
+
+    .icon-badge {
+      width: 72px;
+      height: 72px;
+      background: #f0fdf4;
+      color: var(--primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: -5.25rem;
+      margin-bottom: 2rem;
+      border: 8px solid #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover .icon-badge {
+      background: var(--primary);
+      color: #fff;
+      transform: rotate(5deg);
+    }
+
+    .card-content h3 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .card-content p {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .read-more {
+      margin-top: auto;
+      padding: 1rem 2.5rem;
+      border: 2px solid #f0f0f0;
+      border-radius: 16px;
+      text-decoration: none;
+      color: #111;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .read-more:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(180, 83, 9, 0.2);
+    }
+
+    .read-more .arrow {
+      transition: transform 0.3s ease;
+      font-size: 1.2rem;
+    }
+
+    .read-more:hover .arrow {
+      transform: translateX(6px);
+    }
+
+    @media (max-width: 768px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .services-hero {
+        padding: 5rem 0;
+      }
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+      .container {
+        padding: 0 1.5rem;
+      }
+    }
+  </style>
+</Layout>

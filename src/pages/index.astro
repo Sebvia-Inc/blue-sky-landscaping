@@ -7,7 +7,7 @@ let testimonials = [];
 try {
   const [s, t] = await Promise.all([
     fetch(
-      `${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=6`,
+      `${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=50`,
     ),
     fetch(
       `${client.cmsUrl}/api/testimonials?where[tenant.slug][equals]=${client.tenantSlug}&limit=3`,
@@ -17,12 +17,22 @@ try {
   testimonials = (await t.json()).docs || [];
 } catch {}
 
-const displayServices = services.length
-  ? services
-  : client.services.map((s: string) => ({
-      title: s,
-      description: `Professional ${s.toLowerCase()} services in ${client.city}.`,
-    }));
+const localServices = client.services.map((s: string) => ({
+  title: s,
+  description: `Professional ${s.toLowerCase()} services in ${client.city}.`,
+}));
+
+// Combine CMS and Local services, avoiding duplicates by title
+const displayServices = [...services];
+localServices.forEach((ls) => {
+  if (
+    !displayServices.find(
+      (ds) => ds.title.toLowerCase() === ls.title.toLowerCase(),
+    )
+  ) {
+    displayServices.push(ls);
+  }
+});
 
 const primary = client.primaryColor || "#2d5a3d";
 ---
@@ -430,36 +440,43 @@ const primary = client.primaryColor || "#2d5a3d";
 
       <!-- Services Grid -->
       <div
-        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;"
+        class="services-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem;"
       >
         {
-          [
-            { title: "Landscape Design", image: "/images/service-design.png" },
-            {
-              title: "Garden Installation",
-              image: "/images/service-installation.png",
-            },
-            {
-              title: "Lawn Care & Maintenance",
-              image: "/images/service-maintenance.png",
-            },
-          ].map((s) => (
-            <div
+          displayServices.map((s: any, i: number) => (
+            <a
+              href={`/services/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`}
               class="service-card"
-              style="position: relative; height: 400px; border-radius: 40px; overflow: hidden; cursor: pointer; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 40px rgba(0,0,0,0.1);"
+              style="position: relative; height: 480px; border-radius: 40px; overflow: hidden; cursor: pointer; display: block; text-decoration: none;"
             >
               <img
-                src={s.image}
+                src={s.image?.url || s.image || `/images/service-${(i % 3) + 1}.png`}
                 alt={s.title}
-                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;"
+                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease;"
               />
-              <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.3) 100%);" />
-              <div style="position: absolute; top: 2.5rem; left: 2.5rem;">
-                <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                  {s.title}
-                </h3>
+              <div class="service-overlay" />
+              <div class="service-content">
+                <h3 class="service-title">{s.title}</h3>
+                <p class="service-description">{s.description}</p>
+                <div class="service-dot" />
+                <div class="service-arrow">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </div>
               </div>
-            </div>
+            </a>
           ))
         }
       </div>
@@ -467,70 +484,315 @@ const primary = client.primaryColor || "#2d5a3d";
   </section>
 
   <style>
-    .service-card:hover {
-      transform: translateY(-15px) scale(1.02);
+    .service-card {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform, opacity;
     }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .service-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(6, 78, 59, 0.4) 0%,
+        rgba(6, 78, 59, 0.7) 100%
+      );
+      opacity: 0.6;
+      transition: all 0.5s ease;
+    }
+
+    .service-card:hover .service-overlay {
+      opacity: 0.9;
+      background: rgba(6, 78, 59, 0.85);
+    }
+
     .service-card:hover img {
       transform: scale(1.1);
     }
+
+    .service-content {
+      position: absolute;
+      inset: 0;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      color: #fff;
+      z-index: 2;
+    }
+
+    .service-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      transition: transform 0.5s ease;
+    }
+
+    .service-description {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease 0.1s;
+      max-width: 90%;
+    }
+
+    .service-card:hover .service-description {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .service-dot {
+      width: 12px;
+      height: 12px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin: 2rem 0;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.4s ease 0.2s;
+    }
+
+    .service-card:hover .service-dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .service-arrow {
+      margin-top: auto;
+      width: 64px;
+      height: 64px;
+      background: #fff;
+      color: #064e3b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(-100px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s;
+    }
+
+    .service-card:hover .service-arrow {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
     @media (max-width: 968px) {
-      .container > div:first-child {
+      .services-grid {
         grid-template-columns: 1fr !important;
         gap: 2rem !important;
       }
-      .container > div:last-child {
-        grid-template-columns: 1fr !important;
-      }
       .service-card {
-        height: 300px !important;
+        height: 400px !important;
+      }
+      .service-description {
+        opacity: 1;
+        transform: none;
+      }
+      .service-arrow {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .why-choose-us .container {
+        grid-template-columns: 1fr !important;
+        gap: 3rem !important;
+        text-align: center;
+      }
+      .why-choose-us .content-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .why-choose-us .features-grid {
+        justify-content: center;
+      }
+      .why-choose-us .visual-column {
+        order: 2;
       }
     }
   </style>
 
-  <section style={`padding:4rem 1.5rem;background:${primary}12`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h2
-        style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:2.5rem"
-      >
-        Why Choose {client.name}?
-      </h2>
+  <section
+    class="why-choose-us"
+    style="padding: 120px 1.5rem; overflow: hidden; background: #fff; position: relative;"
+  >
+    <div
+      class="container"
+      style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;"
+    >
+      <!-- Left: Visual Column -->
       <div
-        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem"
+        class="visual-column"
+        style="position: relative; display: flex; justify-content: center; align-items: center;"
       >
-        {
-          [
-            {
-              icon: "🏆",
-              title: "Years of Experience",
-              desc: "Trusted by hundreds of local homeowners.",
-            },
-            {
-              icon: "⚡",
-              title: "Fast Response",
-              desc: "Same-day service. We show up when we say.",
-            },
-            {
-              icon: "💯",
-              title: "Quality Guaranteed",
-              desc: "Satisfaction guarantee on every job.",
-            },
-            {
-              icon: "💰",
-              title: "Fair Pricing",
-              desc: "Transparent quotes. No hidden fees.",
-            },
-          ].map((item) => (
-            <div style="text-align:center;padding:1.75rem 1.25rem;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05)">
-              <div style="font-size:2.5rem;margin-bottom:0.75rem">
-                {item.icon}
+        <!-- Background Shape -->
+        <div
+          style={`position: absolute; width: 140%; height: 80%; background: ${primary}12; border-radius: 500px; transform: rotate(-10deg); left: -20%; z-index: 1;`}
+        >
+        </div>
+        <!-- Decorative Dots -->
+        <div
+          style={`position: absolute; top: 15%; right: 10%; width: 15px; height: 15px; background: ${primary}; border-radius: 50%; z-index: 2;`}
+        >
+        </div>
+        <div
+          style={`position: absolute; bottom: 20%; left: -5%; width: 10px; height: 10px; background: ${primary}44; border-radius: 50%; z-index: 2;`}
+        >
+        </div>
+        <!-- Image -->
+        <img
+          src="/expert.png"
+          alt="Our Expert"
+          style="position: relative; z-index: 3; width: 100%; max-width: 550px; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.12));"
+        />
+      </div>
+
+      <!-- Right: Content Column -->
+      <div class="content-column">
+        <div
+          style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 2rem;"
+        >
+          <div
+            style={`width: 40px; height: 40px; background: ${primary}15; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: ${primary};`}
+          >
+            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C11,20 12,17 12,17C12,17 13,20 16,20C18.95,20 20.9,17.75 21,15C21.05,12.1 20.21,10.04 18.4,8.5C18,8.2 17.5,8 17,8M8,18C7.5,18 7,17.5 7,17C7,16.5 7.5,16 8,16C8.5,16 9,16.5 9,17C9,17.5 8.5,18 8,18M11,14C10.5,14 10,13.5 10,13C10,12.5 10.5,12 11,12C11.5,12 12,12.5 12,13C12,13.5 11.5,14 11,14M16,18C15.5,18 15,17.5 15,17C15,16.5 15.5,16 16,16C16.5,16 17,16.5 17,17C17,17.5 16.5,18 16,18Z"
+              ></path>
+            </svg>
+          </div>
+          <span
+            style={`font-weight: 800; color: ${primary}; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px;`}
+            >Why Choose Us</span
+          >
+        </div>
+
+        <h2
+          style={`font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.05; font-weight: 800; color: #111; margin-bottom: 2rem; letter-spacing: -1px;`}
+        >
+          Why choose us <span style={`color: ${primary};`}>for your</span> landscaping
+          needs?
+        </h2>
+
+        <p
+          style="font-size: 1.15rem; line-height: 1.8; color: #555; margin-bottom: 3.5rem; max-width: 600px;"
+        >
+          Choose us for expert landscaping: personalized designs, quality
+          craftsmanship, and dedicated service to make your outdoor space
+          exceptional.
+        </p>
+
+        <div
+          class="features-grid"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2.5rem;"
+        >
+          {
+            [
+              {
+                title: "Years of Experience",
+                desc: "Trusted by hundreds of local homeowners with years of expertise.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M5 3v4M19 3v4M5 11h14M5 15h14M5 19h14M12 3v18"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                title: "Fast Response",
+                desc: "Same-day service. We show up when we say, every time.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                title: "Quality Guaranteed",
+                desc: "100% satisfaction guarantee on every landscaping project.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                title: "Fair Pricing",
+                desc: "Transparent quotes with no hidden fees or surprises.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-12c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                ),
+              },
+            ].map((feature) => (
+              <div class="feature-item">
+                <div
+                  style={`width: 60px; height: 60px; background: ${primary}12; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: ${primary}; margin-bottom: 1.25rem;`}
+                >
+                  {feature.icon}
+                </div>
+                <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; color: #111;">
+                  {feature.title}
+                </h3>
+                <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">
+                  {feature.desc}
+                </p>
               </div>
-              <h3 style="font-weight:700;margin-bottom:0.5rem">{item.title}</h3>
-              <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">
-                {item.desc}
-              </p>
-            </div>
-          ))
-        }
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -562,27 +824,70 @@ const primary = client.primaryColor || "#2d5a3d";
   }
 
   <section
-    style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}
+    style={`padding: 8rem 1.5rem; background: #f8f1ec; color: #1a1a1a; position: relative;`}
   >
-    <div style="max-width:700px;margin:0 auto">
-      <h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">
-        Ready to Get Started?
-      </h2>
-      <p style="opacity:0.9;margin-bottom:2rem;font-size:1.05rem">
-        Contact us today for a free, no-obligation estimate.
-      </p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <a
-          href="/contact"
-          style="background:#fff;color:#111;padding:0.85rem 2.5rem;border-radius:10px;font-weight:700"
-          >Get Free Quote</a
-        >
-        <a
-          href={`tel:${client.phone}`}
-          style="border:2px solid rgba(255,255,255,0.7);color:#fff;padding:0.85rem 2.5rem;border-radius:10px;font-weight:700"
-          >{client.phone || "Call Us"}</a
-        >
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 3rem;">
+      <div style="flex: 1; min-width: 300px;">
+        <h2 style="font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin: 0;">
+          We Care Your <br />
+          <span style={`color: ${primary}`}>Garden Landscaping</span>
+        </h2>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1.5rem; min-width: 300px;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style={`width: 48px; height: 48px; border-radius: 50%; background: ${primary}15; display: flex; align-items: center; justify-content: center; color: ${primary}`}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <span style="font-size: 1.75rem; font-weight: 700; color: #1a1a1a;">{client.phone}</span>
+        </div>
+        <a href="/contact" style={`background: ${primary}; color: #fff; padding: 1.1rem 2.5rem; border-radius: 8px; font-weight: 800; text-decoration: none; transition: all 0.3s ease; display: inline-block; box-shadow: 0 10px 20px ${primary}33;`}>
+          Ask Feel Free Question here?
+        </a>
       </div>
     </div>
   </section>
 </Layout>
+<script is:inline>
+  // Register ScrollTrigger
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Animate Sections
+  gsap.from(".feature-item", {
+    scrollTrigger: {
+      trigger: ".why-choose-us",
+      start: "top 85%",
+    },
+    y: 50,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.1,
+    ease: "power3.out",
+  });
+
+  gsap.from(".service-card", {
+    scrollTrigger: {
+      trigger: ".services-grid",
+      start: "top 80%",
+    },
+    scale: 0.95,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: "power2.out",
+  });
+
+  gsap.from(".hero-content > *", {
+    y: 30,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.15,
+    ease: "power4.out",
+  });
+
+  // Refresh ScrollTrigger after a short delay to ensure Lenis and layout are ready
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+  });
+</script>
