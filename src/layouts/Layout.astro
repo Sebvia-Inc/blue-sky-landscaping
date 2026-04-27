@@ -28,6 +28,7 @@ const primary = client.primaryColor || "#b45309";
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
       is:inline></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" is:inline></script>
     <style
       set:html={`
     :root {
@@ -545,9 +546,31 @@ const primary = client.primaryColor || "#b45309";
           </div>
         </div>
       </div>
-    </footer>>
+    </footer>
 
     <script is:inline>
+      // Initialize Lenis
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+      })
+
+      // Link Lenis to GSAP ScrollTrigger
+      lenis.on('scroll', ScrollTrigger.update)
+
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000)
+      })
+
+      gsap.ticker.lagSmoothing(0)
+
       const menuBtn = document.getElementById("menu-btn");
       const closeBtn = document.getElementById("close-menu");
       const mobileNav = document.getElementById("mobile-nav");
